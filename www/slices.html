@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Slices</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+
+</head>
+
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div><div class="undertitle">
+<center>Applications and Slices</center>
+</div>
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+
+<h3><i>Note: Most of the constructs described in this section are still under heavy development, and as such, are subject to change</i></h3>
+<h2>What is an application?</h2>
+Mostly an application is, in the client sense of the word, a <em>gestalt</em> entity. i.e. the application, for the most part is running in a single process, and can be said to contain, in some sense of the word, all the components that make up the application.
+<h2>The Remote services</h2>
+<p>But the service code that i use is not in process, although I might think so. This is a high level coarse-grained issue. With Neon we have to go down into the application code a little further.</p>
+<p> If you think about <em>client</em> applications, in general, all the code for these clients are held in a singular entity - let's say an executable jar. For the code that can be re-used across many applications, you can split these sections out and create services to handle those parts of your applications. However, there will be the code that has to connect to these services, interact with them, and handle the results of calls to these service, within the context of that particular application. With Neon, you can create an application in a similar way, one single entity, and it will work just fine. You can also create an extremely dynamic application where all parts are independent agents deployed separately, that work together to form your process at runtime. Unfortunately, as well as exposing certain advantages, there are a number of drawbacks to both these approaches. </p>
+<table width="90%"  border="1" cellpadding="1" cellspacing="0" bordercolor="#666666" bgcolor="#99CCFF">
+  <tr>
+    <th>&nbsp;</th>
+    <th>Advantages</th>
+    <th>Disadvantages</th>
+  </tr>
+  <tr>
+    <td rowspan="2">Singular entity </td>
+    <td>One piece </td>
+    <td>All dependencies must be realised in the same process</td>
+  </tr>
+  <tr>
+    <td height="26">Easy to manage </td>
+    <td>One piece </td>
+  </tr>
+  <tr bgcolor="#000000">
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td rowspan="4">Independent agents</td>
+    <td>Deployed to systems that only match the requirements of that agent, not everything else as well </td>
+    <td><p>As an application, very difficult to manage</p></td>
+  </tr>
+  <tr>
+    <td>Possibility to deal with partial failure </td>
+    <td>Difficult to see the requirements of the overall application </td>
+  </tr>
+  <tr>
+    <td>Create redundant agents that can be started as other agents fail </td>
+    <td>Lifecycle of components independent of the overall application </td>
+  </tr>
+  <tr>
+    <td>Overall application can be tuned without having to restart a single entity </td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<p>Essentially, although agents are very flexible, and can work together dynamically very well, managing them as a single or multiple units is not very practical. Likewise, having a very dynamic SSI grid infrastructure is not particularly useful if you always have to deploy an application as a singular entity, in order for it to be manageable.</p>
+<p>Neon's solution is to use <strong>slices</strong>. You can think of slices being exactly that, a slice of your application, that can be managed and constrained independently of the overall application, whilst, you can still manage both at the application and individual agent level.</p>
+<p>Slices sit between a monolithic application deployment, and multiple, separate agents. Moreover, an <em>Application</em> in Neon is defined as a logical object, representing a collection of slice references. Each slice can contain agent references, as well as references to other slices(known as <em>sub-slices</em>). An <em>Application</em> is basically a top-level slice. Slices are mainly to provide management and monitoring on a set of agents. </p>
+<h2>Slice features</h2>
+<p>A Slice maintains a set of references to agents that it is responsible for. It also manages references to other slices, although it does not manage these. Slices can be deployed directly into an agent service where the slice is passed onto a SliceManager. Each slice can have it's own Configuration and Requirements object, and you can also specify it's own initialiser method, for when it is deployed. Agents can be moved in and out of slices.</p>
+<h2>Agent deployment with Slices </h2>
+<p>With a slice, all agents in the set are managed together as a group. For instance, stopping a slice, will cause the <strong>stop()</strong> method to be called on every agent. Slices also manage and monitor the deployment of the referenced agents and their sub-slices. </p>
+<p>Slices can, but do not necessarily have to, enforce a particular deployment policy on agents. For instance, you may want part of your application to have three agents of the same type, but not allow any of these agents to run on the same system. Conversely, for performance reasons, you may want some agents that collaborate with each other to always be deployed to the same system, if possible. You may also want to have agents that are hibernated in case of redundancy, where the current live agent fails, and another agent is automatically started in it's place. </p>
+<p>By defining your application as slices, you can deploy different parts of your application to the areas of the grid that they are best suited to run on.</p>
+
+<p>There are different types of slices, each representing a different deployment policy, by using sub-slices, and using enforcement, you can define a very detailed deployment profile of your application.</p>
+<table width="90%">
+<tr><th>Slice Type</th><th>Description</th></tr>
+<tr><td>Attractor</td>
+<td>Requests that Agents &amp; subslices are kept in the same host as each other </td>
+
+</tr>
+<tr>
+  <td>Repeller</td>
+  <td>Tries to ensure that the agents referenced in the slice are not run on the same host </td>
+</tr>
+<tr>
+  <td>Redundant</td>
+  <td>Runs agents or the agents in subslices whereby only one of them is 'active' at any point in time, if any of the agents fail, one of the sleeping agents is made active in its place </td>
+</tr>
+<tr>
+  <td>Virtual</td>
+  <td><p>Provides a means for a set of agents to be lazy-loaded </p>    </td>
+</tr>
+<tr>
+  <td>Factory</td>
+  <td>Creates agents (not able to have sub-slices)</td>
+</tr>
+<tr><td></td><td></td></tr>
+</table>
+<hr> 
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div> 
+<p>&nbsp;</p> 
+
+</div>
+</div>
+</div>
+</body>
+</html>

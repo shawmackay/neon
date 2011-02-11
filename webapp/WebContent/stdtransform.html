@@ -1,0 +1,1531 @@
+<link xmlns="http://www.w3.org/1999/xhtml" href="tree.css" rel="stylesheet" type="text/css"></link>
+<link xmlns="http://www.w3.org/1999/xhtml" href="neon.css" rel="stylesheet" type="text/css"></link>
+<body xmlns="http://www.w3.org/1999/xhtml"><script>
+		
+    
+    function expandBranch(id){
+        var div = document.getElementById('expand'+id);
+         var imgdiv=document.getElementById('bullet'+id);
+        if(div.style.display=='none'){
+        div.style.display="block";
+        div.style.visibility='visible';
+        imgdiv.src="images/bullet_toggle_minus.png"
+        } else {
+        div.style.display="none";
+        div.style.visibility='hidden';
+        imgdiv.src="images/bullet_toggle_plus.png"
+        }
+       
+        
+    }
+				
+				var currentTree;
+				
+				function showTree(id){
+        var div = document.getElementById('tree'+id);
+				var olddiv = document.getElementById('tree'+currentTree);
+         	
+				if(id!=currentTree){
+				if(currentTree!=null){
+				olddiv.style.display='none';
+				olddiv.style.visibility='hidden';
+				var ldivid = 'tab_l_id_' +id;
+				
+				
+				
+				
+				var ldiv = document.getElementById('tab_l_id_' +currentTree);
+				ldiv.setAttribute("class", "tab_l_clear");
+				ldiv.setAttribute("className", "tab_l_clear");
+				
+				ldiv = document.getElementById('tab_c_id_' +currentTree);
+				ldiv.setAttribute("class", "tab_c_clear");
+				ldiv.setAttribute("className", "tab_c_clear");
+				
+				ldiv = document.getElementById('tab_r_id_' +currentTree);
+				ldiv.setAttribute("class", "tab_r_clear");
+				ldiv.setAttribute("className", "tab_r_clear");
+				
+				}
+				}
+				var ldiv = document.getElementById('tab_l_id_' +id);
+				ldiv.setAttribute("class", "tab_l_select");
+				ldiv.setAttribute("className", "tab_l_select");
+				
+				ldiv = document.getElementById('tab_c_id_' +id);
+				ldiv.setAttribute("class", "tab_c_select");
+				ldiv.setAttribute("className", "tab_c_select");
+				
+				ldiv = document.getElementById('tab_r_id_' +id);
+				ldiv.setAttribute("class", "tab_r_select");
+				ldiv.setAttribute("className", "tab_r_select");
+        div.style.display="block";
+        div.style.visibility='visible';
+				currentTree = id;
+         
+     
+        
+    }
+    
+function showLink(id){
+        var div = document.getElementById(id);
+         var filldiv = document.getElementById('agentInfo');
+				
+        filldiv.innerHTML = div.innerHTML;
+        div = document.getElementById(id);
+        div.style.display="block";
+        div.style.visibility='visible';
+        
+    }				
+				
+    
+	</script><div id="mainbody"><img src="images/imageEffectsBelow_neonemboss_small_blue.png" alt="" id="id3" style="border: none; height: 152px; left: 16px; opacity: 1.00; position: fixed; top: 4px; width: 224px; z-index: 1; "></img><img src="images/neonemboss_small_blue.jpg" alt="" style="border: none; height: 100px; left: 24px; opacity: 1.00; position: fixed; top: 12px; width: 200px; z-index: 2; "></img><img src="images/imageEffectsAbove_neonemboss_small_blue.png" alt="" id="id4" style="border: none; height: 152px; left: 16px; opacity: 1.00; position: fixed; top: 4px; width: 224px; z-index: 1; "></img><span>
+         <div class="btn_l_aqua"></div>
+         <div class="btn_c_aqua">
+            <div style="margin-top:13px;"><font size="+1">Monitor Results</font></div>
+         </div>
+         <div class="btn_r_aqua"></div></span><div class="floatClear"></div>
+       System currently running on machine isis.local
+      <hr></hr>
+      
+      <center>
+         <table width="60%">
+            <tr>
+               <th colspan="2">Java Information</th>
+            </tr>
+            <tr>
+               <td width="50%">Virtual Machine Version</td>
+               <td>1.5.0_07-87</td>
+            </tr>
+            <tr>
+               <td width="50%">Vendor</td>
+               <td>"Apple Computer, Inc."</td>
+            </tr>
+            <tr>
+               <td width="50%">VM Name</td>
+               <td>Java HotSpot(TM) Client VM</td>
+            </tr>
+         </table>
+      </center>
+      
+      <center>
+         <table width="60%">
+            <tr>
+               <th colspan="2">Memory Information</th>
+            </tr>
+            <tr>
+               <td width="50%">Free Memory</td>
+               <td>1367776</td>
+            </tr>
+            <tr>
+               <td width="50%">Total Memory</td>
+               <td>5074944</td>
+            </tr>
+         </table>
+      </center>
+      
+      <center>
+         <table width="60%" bgcolor="eeeeff">
+            <tr>
+               <th colspan="2">OS Information</th>
+            </tr>
+            <tr>
+               <td width="50%">Operating System</td>
+               <td>Mac OS X</td>
+            </tr>
+            <tr>
+               <td>System Version</td>
+               <td>10.4.10</td>
+            </tr>
+            <tr>
+               <td>System Architecture</td>
+               <td>i386</td>
+            </tr>
+         </table><br></br><br></br></center>
+      
+      
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoa37eeff3-c8bd-4461-9e29-528f5918843a">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Callback</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>a37eeff3-c8bd-4461-9e29-528f5918843a</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">a37eeff3-c8bd-4461-9e29-528f5918843a</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info6bfbe168-b30c-4300-9fb8-93c2f0d45083">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Services</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>6bfbe168-b30c-4300-9fb8-93c2f0d45083</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">6bfbe168-b30c-4300-9fb8-93c2f0d45083</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      
+      
+      
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info5e9c9688-3aca-4d5f-9f4c-00059f40eeac">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>5e9c9688-3aca-4d5f-9f4c-00059f40eeac</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">5e9c9688-3aca-4d5f-9f4c-00059f40eeac</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info007071e0-1f6e-431c-b420-bcb56319b476">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Callback</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>007071e0-1f6e-431c-b420-bcb56319b476</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">007071e0-1f6e-431c-b420-bcb56319b476</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infobc036ce6-28ca-4b74-a69e-521c50c4966d">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>bc036ce6-28ca-4b74-a69e-521c50c4966d</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">bc036ce6-28ca-4b74-a69e-521c50c4966d</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info62762cc2-2adb-43d5-a5ae-4a724f562360">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>62762cc2-2adb-43d5-a5ae-4a724f562360</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">62762cc2-2adb-43d5-a5ae-4a724f562360</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info020c24f9-09d9-41b5-9ae4-2aa92e1aa9a6">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Renderer</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>020c24f9-09d9-41b5-9ae4-2aa92e1aa9a6</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">020c24f9-09d9-41b5-9ae4-2aa92e1aa9a6</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoc901b62b-cb30-4237-a5e4-aa08b7644bad">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>xslEngine</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.render.engines</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>c901b62b-cb30-4237-a5e4-aa08b7644bad</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">c901b62b-cb30-4237-a5e4-aa08b7644bad</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info7c59f1c9-7a90-4dc5-bcf0-1393a3907652">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>POJO</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>simpler</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>7c59f1c9-7a90-4dc5-bcf0-1393a3907652</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">7c59f1c9-7a90-4dc5-bcf0-1393a3907652</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info615559e8-fd25-4815-a153-69a95694d297">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Renderer</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>615559e8-fd25-4815-a153-69a95694d297</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">615559e8-fd25-4815-a153-69a95694d297</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info823062f6-efa0-4cb3-84d5-d09e417f996b">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>UserData</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>823062f6-efa0-4cb3-84d5-d09e417f996b</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">823062f6-efa0-4cb3-84d5-d09e417f996b</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+                  <td>
+                     <form action="Render.do" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="agentid">823062f6-efa0-4cb3-84d5-d09e417f996b</textarea></div><input type="SUBMIT" name="submit" value="Show"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoaceb0fcc-3e9c-4229-9d61-9e8e7096967d">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>aceb0fcc-3e9c-4229-9d61-9e8e7096967d</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">aceb0fcc-3e9c-4229-9d61-9e8e7096967d</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoce96e701-3b1a-4601-9739-3f21888dfc0e">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Employee</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.transactions</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>ce96e701-3b1a-4601-9739-3f21888dfc0e</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">ce96e701-3b1a-4601-9739-3f21888dfc0e</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+                  <td>
+                     <form action="Render.do" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="agentid">ce96e701-3b1a-4601-9739-3f21888dfc0e</textarea></div><input type="SUBMIT" name="submit" value="Show"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info9145a43f-292b-490a-8fd3-d90c2bff4165">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>JavaSpaceOps</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.transactions</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>9145a43f-292b-490a-8fd3-d90c2bff4165</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">9145a43f-292b-490a-8fd3-d90c2bff4165</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoc6d7f4eb-3808-45ac-be77-d7a0e7b48df6">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>SvcPOJO</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>simpler</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>c6d7f4eb-3808-45ac-be77-d7a0e7b48df6</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">c6d7f4eb-3808-45ac-be77-d7a0e7b48df6</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoadf3ed82-0e6b-41ad-b850-48e14071bfc5">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Hello</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>examples</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>adf3ed82-0e6b-41ad-b850-48e14071bfc5</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">adf3ed82-0e6b-41ad-b850-48e14071bfc5</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info3aafa316-49cc-4365-bcad-c969b98a534c">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>xslEngine</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.render.engines</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>3aafa316-49cc-4365-bcad-c969b98a534c</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">3aafa316-49cc-4365-bcad-c969b98a534c</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info22c1ba0b-1d55-41a5-a60b-61d5b8a0e283">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>xslEngine</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.render.engines</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>22c1ba0b-1d55-41a5-a60b-61d5b8a0e283</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">22c1ba0b-1d55-41a5-a60b-61d5b8a0e283</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info7b4cf549-54c6-4e7b-9a63-1a3db9857e14">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>CheckPoint</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>7b4cf549-54c6-4e7b-9a63-1a3db9857e14</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">7b4cf549-54c6-4e7b-9a63-1a3db9857e14</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info5b7caf2f-8d03-49db-8989-e1cf7d281301">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>5b7caf2f-8d03-49db-8989-e1cf7d281301</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">5b7caf2f-8d03-49db-8989-e1cf7d281301</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoe7511078-2960-4907-a938-d99321b96c12">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Monitor</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>e7511078-2960-4907-a938-d99321b96c12</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">e7511078-2960-4907-a938-d99321b96c12</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoaed8920c-343d-4441-bcaf-01cb18f5ca88">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>CheckPoint</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>aed8920c-343d-4441-bcaf-01cb18f5ca88</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">aed8920c-343d-4441-bcaf-01cb18f5ca88</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoa52397c1-0e95-4c91-aff2-6521da33f6a2">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>a52397c1-0e95-4c91-aff2-6521da33f6a2</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">a52397c1-0e95-4c91-aff2-6521da33f6a2</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoa277bea7-99d1-4673-91cf-6b0bb724d9a3">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Callback</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>a277bea7-99d1-4673-91cf-6b0bb724d9a3</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">a277bea7-99d1-4673-91cf-6b0bb724d9a3</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoe4fb91b0-23bb-4cc0-a591-d1dd4fef6136">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transfer</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>e4fb91b0-23bb-4cc0-a591-d1dd4fef6136</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">e4fb91b0-23bb-4cc0-a591-d1dd4fef6136</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info50928fcd-e818-4975-9dad-a9d01e85532d">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>SimpleWeb</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>50928fcd-e818-4975-9dad-a9d01e85532d</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">50928fcd-e818-4975-9dad-a9d01e85532d</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+                  <td>
+                     <form action="Render.do" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="agentid">50928fcd-e818-4975-9dad-a9d01e85532d</textarea></div><input type="SUBMIT" name="submit" value="Show"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info7c5a022b-1add-4ff7-93d0-5d61807464e0">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Slice</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>vertigo</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>7c5a022b-1add-4ff7-93d0-5d61807464e0</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">7c5a022b-1add-4ff7-93d0-5d61807464e0</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info4a911679-83cc-4d0f-945c-e0a9b80a0f89">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Services</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>4a911679-83cc-4d0f-945c-e0a9b80a0f89</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">4a911679-83cc-4d0f-945c-e0a9b80a0f89</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info8879f7c1-898b-406b-8209-2e5c034e3248">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Renderer</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>8879f7c1-898b-406b-8209-2e5c034e3248</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">8879f7c1-898b-406b-8209-2e5c034e3248</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info730cd154-0e97-4198-96f3-2e417349e6cc">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Services</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>730cd154-0e97-4198-96f3-2e417349e6cc</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">730cd154-0e97-4198-96f3-2e417349e6cc</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info73dacb03-56b0-46e9-a9e4-a39853f47a69">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>JavaSpaceOps</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.transactions</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>73dacb03-56b0-46e9-a9e4-a39853f47a69</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">73dacb03-56b0-46e9-a9e4-a39853f47a69</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info7c94c432-4cee-4c16-91d8-03bce3d9ee59">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Services</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>7c94c432-4cee-4c16-91d8-03bce3d9ee59</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">7c94c432-4cee-4c16-91d8-03bce3d9ee59</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infof572d560-95d8-4b1c-bbe2-2632f09d9ef6">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>TimeSensor</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.test</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>f572d560-95d8-4b1c-bbe2-2632f09d9ef6</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">f572d560-95d8-4b1c-bbe2-2632f09d9ef6</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info77f02251-817b-4aa5-9e2f-9c91c9bf8f9a">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>JavaSpaceOps</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.transactions</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>77f02251-817b-4aa5-9e2f-9c91c9bf8f9a</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">77f02251-817b-4aa5-9e2f-9c91c9bf8f9a</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info1d31af4e-83f5-45b0-ba40-28243ea5edaa">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>1d31af4e-83f5-45b0-ba40-28243ea5edaa</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">1d31af4e-83f5-45b0-ba40-28243ea5edaa</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info012e20b4-ef2e-4806-b267-60a04a8482b3">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Killer</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>012e20b4-ef2e-4806-b267-60a04a8482b3</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">012e20b4-ef2e-4806-b267-60a04a8482b3</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infofe3f329a-36ce-4ea3-9eb0-9ad2e7736723">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>TaskCreator</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>org.jini.projects.neon.tasks.tests</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>fe3f329a-36ce-4ea3-9eb0-9ad2e7736723</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">fe3f329a-36ce-4ea3-9eb0-9ad2e7736723</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoe18dff65-d55a-438b-a639-fb042cf583c1">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Renderer</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>e18dff65-d55a-438b-a639-fb042cf583c1</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">e18dff65-d55a-438b-a639-fb042cf583c1</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info3d8487d5-c272-4055-8447-0279af92c850">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>3d8487d5-c272-4055-8447-0279af92c850</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">3d8487d5-c272-4055-8447-0279af92c850</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoe65e2ebb-e76b-4031-84dd-fa38a4d46e00">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>JavaSpaceOps</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.transactions</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>e65e2ebb-e76b-4031-84dd-fa38a4d46e00</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">e65e2ebb-e76b-4031-84dd-fa38a4d46e00</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info3f378f20-21a6-4ff3-bde4-b7b7e4a159bd">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>xslEngine</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon.render.engines</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>3f378f20-21a6-4ff3-bde4-b7b7e4a159bd</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">3f378f20-21a6-4ff3-bde4-b7b7e4a159bd</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoac0bd030-90e8-4665-a809-f397ed55caeb">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Recovery</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>ac0bd030-90e8-4665-a809-f397ed55caeb</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">ac0bd030-90e8-4665-a809-f397ed55caeb</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info6d24ec8d-1663-42a5-bf34-e4664877f401">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Services</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>6d24ec8d-1663-42a5-bf34-e4664877f401</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">6d24ec8d-1663-42a5-bf34-e4664877f401</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info80c28b27-ffca-4c63-8b4d-2edd13e1ddfa">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>80c28b27-ffca-4c63-8b4d-2edd13e1ddfa</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">80c28b27-ffca-4c63-8b4d-2edd13e1ddfa</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infoec274994-57cb-4dc7-8795-b2781aaf656d">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transfer</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>ec274994-57cb-4dc7-8795-b2781aaf656d</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">ec274994-57cb-4dc7-8795-b2781aaf656d</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="info3cd16628-58e9-4918-965d-b2adadf168e0">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Transaction</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>3cd16628-58e9-4918-965d-b2adadf168e0</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">3cd16628-58e9-4918-965d-b2adadf168e0</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      <div style="display:none;visibility:hidden">
+         <div id="infobfac2ac2-f294-48f2-b224-11f540211acc">
+            <table>
+               <tr>
+                  <td>Name</td>
+                  <td>Services</td>
+               </tr>
+               <tr>
+                  <td>Namespace</td>
+                  <td><i>neon</i></td>
+               </tr>
+               <tr>
+                  <td>ID</td>
+                  <td>bfac2ac2-f294-48f2-b224-11f540211acc</td>
+               </tr>
+               <tr>
+                  <td>State</td>
+                  <td><b>Available</b></td>
+               </tr>
+               <tr>
+                  <td>
+                     <form action="agents.jsp" METHOD="GET">
+                        <div style="visibility:hidden;display:none;"><textarea name="id">bfac2ac2-f294-48f2-b224-11f540211acc</textarea></div><input type="SUBMIT" name="submit" value="Info"></input></form>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      
+      
+      
+      
+   </div>
+</body>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root name='names'>
+    <subroot name='blarty'>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="examplermerge1.xml"/>
+    </subroot>
+    <subroot name='finnegan'>
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="exmaplemerge2.xml"/>
+    </subroot>
+</root>

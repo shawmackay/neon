@@ -1,0 +1,71 @@
+<project name="build-macros" basedir=".">
+
+	<property name="neon.home" value="../neon" />
+
+	<taskdef name="classdepandjar" classname="org.jini.rio.tools.ant.ClassDepAndJarTask">
+		<classpath location="${neon.home}/lib/classdepandjar.jar" />
+	</taskdef>
+
+	<property name="macro-glyph" value="${neon.home}/lib/glyph.jar" />
+
+	<property name="standardLibrary" value="${neon.home}/lib/sail50.jar" />
+
+	<path id="glyphFactory">
+		<pathelement location="${macro-glyph}" />
+		<fileset dir="${jini.home}/lib">
+			<include name="tools.jar" />
+		</fileset>
+	</path>
+
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: name          
+         = = = = = = = = = = = = = = = = = -->
+	<macrodef name="build-agent">
+		<attribute name="dest" />
+		<attribute name="srcdir" />
+		<attribute name="script.classpath" />
+		<attribute name="buildname" />
+		<attribute name="project.classpath" />
+		<attribute name="dlport" default="80" />
+		<attribute name="dlpath" default="lib-dl" />
+		<attribute name="dlhost" default="localhost" />
+		<attribute name="jinidlport" default="80" />
+		<attribute name="jinidlpath" default="." />
+		<attribute name="jinidlhost" default="localhost" />
+		<element name="copy-includes" />
+		<element name="mergeclass" optional="true"/>
+		<sequential>
+			<mkdir dir="@{dest}" />
+			<mkdir dir=".apt_src" />
+			<copy file="${neon.home}/support/emptyclassdep.xml" tofile="@{buildname}-classdep.xml" />
+			<apt factorypathref="glyphFactory" destdir="@{dest}" srcdir="@{srcdir}" factory="org.jini.glyph.GlyphFactory"  preprocessdir=".apt_src" fork="true" classpathref="@{project.classpath}" debug="true">
+				<option name="jiniRoot" value="${jini.home}/lib" />
+				<option name="scriptClasspath" value="@{script.classpath}" />
+				<option name="projectName" value="@{buildname}" />
+				<option name="dl_port" value="@{dlport}" />
+				<option name="dl_path" value="@{dlpath}" />
+				<option name="dl_file" value="@{buildname}-dl.jar" />
+				<option name="groupCodebase" value="http://@{jinidlhost}:@{jinidlport}/@{jinidlpath}/group-dl.jar" />
+				<option name="classdepBuildFile" value="@{buildname}-classdep.xml" />
+				<option name="classdepBuildRoot" value="@{dest}" />
+				<classpath refid="@{project.classpath}" />
+				
+			</apt>
+			<copy todir="@{dest}" failonerror="false">
+				<copy-includes />
+			</copy>
+			<mkdir dir="${dist}/lib-dl" />
+			<mkdir dir="${dist}/lib" />
+			<jar compress="true" file="${dist}/lib/@{buildname}.jar">
+				<fileset dir="@{dest}" includes="**/*.*" />
+				<fileset dir="${neon.home}/support" includes="META-INF/*.*" />
+				<mergeclass/>
+			</jar>
+			<ant antfile="@{buildname}-classdep.xml" target="buildclassdep" inheritrefs="true" />
+			<delete file="@{buildname}-classdep.xml" failonerror="false" />
+
+			
+		</sequential>
+	</macrodef>
+
+</project>

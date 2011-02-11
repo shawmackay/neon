@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Installation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</HEAD>
+<body bgcolor="#444444">
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div>
+<div class="undertitle">
+<center>
+Installing Neon
+</center>
+</div>
+<div>
+
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+	<h2>Prerequisites</h2>
+	Before installing Neon, you should unzip the latest Jini distribution from the Apache River project, as of writing this is <a href="http://www.apache.org/dyn/closer.cgi/incubator/river/binaries/2.1.1/apache-river-2.1.1-incubating-bin.zip">Apache River 2.1.1</a>
+	<h2>Running the installer</h2>
+	Download the latest Neon binary from <a href="downloads.html">here</a>, you can then double-click the downloaded jar, to run the installer. Follow the prompts as normal, until you are asked to Configure the installation.
+	<h2>Configuring</h2>
+	<p>When you run the post install, you should choose Custom configuration, select the location of where you unzipped the Jini distribution above, as the Jini installation directory, and select the jar <b>[jini installation root]/lib/serviceui.jar</b> for
+	 the serviceui location.i.e. <em>C:\Development\Java\apache-river-2.1.1</em>for Jini location and <em>C:\Development\Java\apache-river-2.1.1\lib\serviceui.jar</em> (the installer will append 'lib' to the end of the Jini installation directory).
+	 You should only have to do this once, the post-installer stores the locations you've chosen.</p>
+     <p>
+	 After pressing <em>Next</em> you'll be asked to download other prerequisites for Neon, these are automatically downloaded for you, unless you tell the Installer that you've already got them on your system.</p>
+	 <p>If you need to download any of the files, click <em>Locate</em>, and wait until the download progress dialog has completed.</p>
+	 <p>You will see a page asking you for any additional libraries that you want to use, this will form the classpath for Neon's scripts. Jars will be added here as the prerequisites are downloaded and unarchived.</p>
+	 
+	 <h2>Base configuration</h2>
+	 <p>Neon ships with a base setup for Jini, that matches the default configuration given - if you wish to run Neon as a separate Jini group, just accept the defaults, and move on.
+	 Otherwise you can change the defaults to match your environment.</p>
+	 
+	 <h2>Codebase</h2>
+	 
+	 <p>If you're using the supplied Jini setup, click on the '...' button next to 'Codebase URL' enter the 'http://localhost:8085' into the popup dialog, and then click yes when asked if you want to copy the codebase files to a directory.</p>
+	 <p>In the file chooser, select the directory where you installed the jini distribution and choose the <em>lib-dl</em> directory.</p>
+	 
+	<p> Now click the 'Generate' button.And it's all done.</p>
+	 
+	 <h2>Testing it all out</h2>
+ <p>Open a couple of Shells or command prompts, and go to where you installed Neon, and go into the jini setup directory, run the start-ws file and the start-phoenix file for your system (.bat for windows, .sh for Linux, Unix and MacOSX)</p>
+	 <p>Should everything go okay you should see activity in both windows and no exceptions being thrown. Now run start-base-setup, again everything should go okay, and some info should be seen in the phoenix window.</p>
+	 
+	 <p>At this point, all the Jini infrastructure that Neon requires is now running, and you can start the runneon file in the neon installation root directory, and hopefully, after a lot of output going past, you'll see 'Neon initialised'.</p>
+	 
+	 
+	 
+</div>
+</div></div>
+</div>
+</body>
+</html>

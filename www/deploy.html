@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Deployment</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+<script type="text/javascript"  src="neon.js">
+</script>
+</HEAD>
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div>
+<div class="undertitle">
+<center>
+Deployment</center>
+</div>
+ <div class="paneldisplayLarge"> 
+    <div class="innerLGPanel"> 
+<ul>
+<li><a href="#methods">Deployment Methods</a></li>
+<li><a href="#collaboration">Mobility and Collaboration</a></li>
+<li><a href="#suitable">Deployment suitability</a></li>
+<li><a href="#hyperjar">Deploying NAR files</a></li>
+</ul>
+
+<a name="methods"></a>
+<h2>Methods of deployment</h2>
+<p>An agent can be deployed in multiple ways</p>
+<ul><li>Defining them in the <code>startup.xml</code> file</li>
+<li>By deploying them through the <code>AgentService</code> API</li>
+<li>By writing a payload agent (an agent that contains other agents)</li>
+<li>By writing entries to a Javaspace, and restarting the service</li>
+<li>By using the AgentDeploy utility</li>
+<li>By using the ServiceUI </li>
+</ul>
+<a name="startupxml"></a>
+<h2>Startup.xml</h2>
+<p>The startup.xml file located in <em>&lt;neonroot>/conf</em> contains the list of agents that are created and deployed when the neon instance is started. <strong>Note:</strong> agents deployed in this way, if moved to another system or stored in a space on shutdown, will be annotated with the codebase of the Neon instance. To change the codebase for the Neon instance you will need to update the configuration file that Neon is started with.
+  </p>
+<p> <code>&lt;agent classname=&quot;&lt;classname&gt;&quot; number=&quot;2&quot; configuration=&quot;&lt;URL&gt;&quot;/&gt;</code> </p>
+<p>By adding this into the file, agents will be automatically deployed. </p>
+<p>The startup.xml file is used to <em>seed</em> an instance of Neon when it is first created, when the instance of Neon is shutdown normally, the agents are persisted into a JavaSpace. If you maintain a reference to the startup.xml file on your second startup of Neon, the agents in the startup file will be created and started, and then the original agents now stored in the space will be restored and restarted.</p>
+<p>For more information, see <a href="config.html">the configuration page</a></p>
+<p>
+    <a name="service"></a>
+</p>
+<h2>Using the AgentService API</h2>
+<p>You can use the AgentService API, to directly deploy an agent to the agent service, add the <em>neon-intf.jar</em> file to your classpath and use normal jini lookup to find an <em>AgentService</em> instance. From there, call <em>deployAgent(Agent)</em> to send your agent to the agent service. <b>Note:</b> Remember to set the codebase for the agent
+  </p>
+<div class="example">					try {
+						ServiceRegistrar[] regs = e.getRegistrars();
+						for (int i = 0; i < regs.length; i++) {
+							ServiceTemplate stmpl = new ServiceTemplate(sid,new Class[]{AgentService.class},null);
+							Object o = regs[i].lookup(stmpl);
+							if(o!=null){
+								AgentService svc = (AgentService) o;
+								System.out.println("Found agent service");
+								try {
+									if(!deployed){
+										svc.deployAgent(cl);
+										deployed=true;
+										System.out.println("Deployed");
+										finishedDiscovery = true;
+										break;
+									}
+									
+								} catch (RemoteException e1) {
+									// TODO Handle RemoteException
+									e1.printStackTrace();
+								}								
+							}
+						}
+					} catch (RemoteException e1) {
+						// TODO Handle RemoteException
+						e1.printStackTrace();
+					}
+				<div class="exampleFooter">Deploying via the AgentService API</div></div><br/>
+				You can also deploy a seeding file, in the same format of the startup.xml file, in order to deploy multiple agents at one time. 
+<h2>Payload Agents</h2>
+The third way is to deploy an agent that deploys other agents (often known as a <i>payload</i> object)
+You can call <em>((PrivilegedAgentContext)getAgentContext()).deployAgent()</em> to directly deploy an agent into your current domain
+<a name="space"></a>
+<h2>Javaspace Entries</h2>
+<p>The fourth way is
+  to write entries into a space that represent your agent. This is part of what a Neon instance does during shutdown and recovery phases, although when an instance is shutdown, the other instances will attempt to re-host the dumped agents </p>
+<p>You will need to create an AgentEntry instance and fill in the constructor fields - this represents the actual serialized agent instance; and write it to the space. Once this is done, you will need to create an AgentConstraintsEntry instance, that holds the same ID as the AgentEntry you just wrote to the space, and contains references to the domain the agent should be deployed to, and the constraints data.</p>
+<div class="example">                 AgentConstraintsEntry existingConstraintsEntry = new AgentConstraintsEntry(ag.getIdentity(), null, null, null, null);
+                        AgentEntry existingAgentEntry = new AgentEntry(ag.getIdentity(), null, null, null);
+                        Entry results = s.readIfExists(existingConstraintsEntry, txnc.transaction, 5000L);
+                        if (results != null) {
+                            results = s.takeIfExists(existingConstraintsEntry, txnc.transaction, 5000L);
+                            results = s.takeIfExists(existingAgentEntry, txnc.transaction, 5000L);
+                        }
+                        s.write(ace, txnc.transaction, Lease.FOREVER);
+                        s.write(ae, txnc.transaction, Lease.FOREVER);
+                        txnc.transaction.commit();       
+<div class="exampleFooter">Creating agent space entries for Deployment on Restart(DOR)</div></div>
+<p>You may also create a LocalAgentConstraintsEntry and persist it to the space, if you wish the instance to create the agent for you (dependent upon the class being available on the host).</p>
+<p><strong>Note:</strong> Entries written in this way will only be restored once the host id of the system they are associated with is restarted. <a name="agentdeploy"></a></p>
+<h2>Using AgentDeploy</h2>
+<p>Neon comes supplied with a number of utilities, one of which is called AgentDeploy<br/>
+  AgentDeploy allows you to specify the configuration and constraint files for an agent and try to deploy it into an agent host in a specified group.<br/>
+  <code>
+  usage: java -classpath ... org.jini.projects.neon.util.AgentDeployer [-?] [-agentclass str] [-agentconfig str] [-agentconstraints str] [-codebase str] [-serviceid str] [-group str]</code><br/>
+  The <code>agentclass</code> argument defines the name of the class for your agent, i.e. org.somewhere.myapp.MyAgent<br/>
+  The <code>agentconfig</code> and <code>agentconstraints</code> arguments are URL's pointing to the required files.<br/>
+  The <code>codebase</code> represents the URL with which your agent will be annotated.<br/>
+  <code>serviceid</code> allows you to request deployment into a specific neon instance.<br/>
+  If <code>group</code> is specified Neon will try to deploy to the first Neon instance that supports the requirements of the agent as specified by its constraints.</p>
+<p>Any agent launched with agent deploy will need to be on the local classpath. There is an alternative <code>AgentDeployLauncher</code> that appends a <code>-jar</code> argument to those shown above. All this class does is set up the correct classpath and run AgentDeployer in a new VM so that the codebase annotation os properly set. Scripts generated with the installer will generate for AgentDeployLauncher.</p>
+<h3>Issues with deployment</h3>
+<p>The main issue when deploying agents is to ensure that codebases are set. If you place your own agent in the startup.xml file, remember to add any collaborative interfaces into the neon codebase set in the configuration file that you start neon with. AgentDeploy sets the codebase for you, and needs to do so to transfer an agent into the system. <a name="serviceui"></a></p>
+<h2>Using the ServiceUI</h2>
+You can deploy a new agent by using Neon's Service UI, to specify codebase's etc. the ServiceUI Container will require special security privileges, specifically to start a JVM process, and IO and Network access. Essentially, this spawns the agent deploy utility, from the service UI.
+
+<h2>Mobility and collaboration<a name="collaboration"></a></h2>
+Mobility allows an agent to move from one host to another, and this may appear to cause problems with references that other agents may have to an agent that has changed it's host, however this doesn't happen becuase of using messaging to deliver method calls. When an agent is deployed, Neon uses Zenith to create channels along which messages can be delivered to the agents, these messages may be messages to invoke a method, messages that are the return result of a method that was invoked, or events. Importantly, because these objects 
+are delivered to channels and not directly to the Java object, the object connected to the channel that will actually perform the method can move. When an agent is transferred, it's channel is stored and removed, when it is restarted on another
+host, the queue is recreated and reloaded.<br/>
+Zenith provides a MessagingService and two other services that handler Message Brokering and Message Routing. If Neon cannot find the channel in it's own local Zenith bus, Neon queries the MessagingService in order to get the service ID of the message bus that contains the channels for the connected object and simply re-routes the object to the other host; conversely
+when the connected object needs to send the reply (if one is required) it finds the host of the calling object in a similar fashion.
+
+<h2>Deployment suitability<a name="suitable"></a></h2>
+One of the biggest issues with downloaded code is ensuring that all the dependencies needed to support that code are available, and that the host for the code is suitable. If an agent is deployed into a host that can support it's requirements, then things are fine; however, if the system cannot meet the requirements of the agent, exceptions may be thrown, such as ClassNotFoundException.<br/>
+ Although, this could be an approach that you could take - deploy the agent, and if an exception is thrown back to the deploying system, then we know it isn't deployed - it is particularly inefficient; we send the object down the wire to the host, which consequently loads the codebase for the object, only to find out that it cannot support the object because required classes are missing. Moreover, there may be some requirements that cannot be evaluated simply by seeing if the code can be loaded at deployment time; this may make it appear that an agent has been successfully deployed, only for it to fail at some other point in it's processing because of a lack of host capabilities.<br/>
+ <p> Neon attempts to handle this by sending the set of needed requirements to the server, prior to sending the agent itself. Neon evaluates the constraints, and if it can support the requirements, returns true to the deployer, which can then deploy the actual agent object. This is important for two reasons; firstly, the whole set of requirements can be evaluated at once, for instance, OS version, free memory, classes, etc., and secondly, by reducing the possibilities of thrown exceptions during deployment, we don't need an online client to check that an agent has failed deployment - for instance AgentConstraintsEntrys are loaded by Neon instances, which refer to a separate AgentEntry, but contains the constraints data, that can be evaluated, prior to taking the referenced AgentEntry, and deploying it.</p>
+ <p>Constraints are specified in a Jini configuration file </p>
+<a name="hyperjar"></a>
+<h2>Creating and deploying NAR files</h2>
+<p>One of the problems with mobile code, is the size of the codebase - the more code you move from the server and deploy into the client process, the bigger the codebase becomes. </p>
+<p>Unfortunately, this problem is compounded for systems such as Neon, that support dynamic applications that rely heavily on being able to move code around the network - If you think of an agent being an entry point into an application, that application is not a proxy to a service but a full implementation. This implementation may require a number of third party libraries to be available, and this can present a difficult choice - either move all the third party libraries into the codebase jar for the application ( or reference from them, which can cause additional codebase requests), use multiple codebases for your application jar and the third party libraries, or add all the third party libraries to each of the instances on the network, and configure a set of agent constraints that look for classes in each of these libraries. </p>
+<p>Ideally, you would choose to have all codebases lumped together into ones file; this has a number of advantages such as support for multiple versions of code (if your RMIClassProvider always creates a new classloader),and only one download request, but the file can be extremely large.</p>
+<p>However, there is another way - hyperjars.</p>
+<p>Hyperjars make use of J2SE 5.0 new Pack200 features, and changes made in Jini2.1, and can pack a number of Jars down to between 20 and 50% of their original size when the packed files are subsequently jarred. Essentially this means that you can include third party libraries in one downloadable file without having to unzip them into one directory and jar them all back up again to create one dl file. </p>
+<p>What HyperJar does is to take your application jar, and a list of third party libraries, it then use Pack200 to reorganise the class files for each jar. Once this is complete, it then puts all these files into a single jar. When this is transmitted, a special RMIClassProvider intercepts any URL ending in <strong>.nar</strong> and starts unzipping the URL, replacing the <em>http://...../something.nar</em> with a sequence of <em>pack:</em> URLs instead, which is then passed to a new NeonClassLoader.</p>
+<p>You can use hyperjars using the hyperjar builder process. </p>
+
+<h3>Versioning of downloaded code</h3>
+<p>Part of the requirements in the hyperjar system is to support versioning of jars, and export annotation re-writing. There are a number of ways of doing this, but allowing support for multiple versions of downloaded code is difficult, because there are issues surrounding how the versions are differentiated from each other and whether the URL's are cached. </p>
+<p>One way is to use httpmd jars which automatically allows you to have new versions of download files available, but because it computes a MD5 signature on a single file, essentially your old dl URLs will no longer compute an appropriate MD5, even if it is just a rebuild, rather than any code changes.</p>
+<p>Another option is to add versioning into your dl-naming scheme. For instance svc-dl-0.1.jar, svc-dl-0.2.jar, etc. However, each one must be managed, and you must remember to update your dl-files. </p>
+<p>At the other side of the wire, a file could be added to the META-INF directory of the jar indicating the version, so that new versions can be downloaded and added locally, however checking the version increases network traffic as you attempt to find out whether the cached versions are the same as the newest version of the code that is available, and again, old versions are effectively over-written as code moves.</p>
+<p>The final way is to write versioning into the codebase URLs, either explicitly or implicitly at runtime. Essentially, this has the benefit that an object's codebase is always refering to the version that it was started with. However, automatic updating of the code by using a single (always current) codebase version is far easier than using a system that maintains multiple versions of the same code.</p>
+<p>No matter which way multiple versions of mobile code can be managed and supplied to a client, there is still the issue of &quot;URL-Jar caching&quot;. Caching jar files is a good thing when it comes to URLs, mainly because it significantly reduces network traffic, based on the assumption that if a URL is requested, and the same URL is requested later, essentially the content of those URL's should be the same.</p>
+<hr>
+<div align="left">
+  <p><a href="neonintro.html">Tutorial Main Page</a></p>
+  <p>&nbsp;</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+
+</html>

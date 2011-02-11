@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<startup>
+    <domains>
+        <domain name="Global" persistonshutdown="true">			
+            <hostAgents>
+                <pre>
+                    <agent classname="org.jini.projects.neon.service.ServiceAgentImpl" number="4" waitafterinit="2" configuration="file:conf/serviceAgent.config"/>
+                    <!--                                        <agent classname="org.jini.projects.neon.agents.tests.SequentialCallAgent" number="28"/>-->
+                    <agent classname="org.jini.projects.neon.callbacks.CallbacksAgentImpl" number="2"/>
+                    <agent classname="org.jini.projects.neon.recovery.CheckpointAgentImpl" number="1" waitafterinit="1" configuration="file:conf/neon.config"/>
+                    <agent classname="org.jini.projects.neon.service.TransferAgentImpl" number="2"/>
+                    <agent classname="org.jini.projects.neon.host.transactions.TransactionAgentImpl" number="10" waitafterinit="0"/>
+                    <agent classname="org.jini.projects.neon.service.MonitorAgentImpl" number="1"/>
+                    <agent classname="org.jini.projects.neon.render.RenderAgentImpl" number="4"/>
+                    <agent classname="org.jini.projects.neon.render.engines.XSLEngine" number="4"/>					
+                    <agent classname="org.jini.projects.neon.users.agents.UserDataAgent" number="1" configuration="file:conf/userdata.config"/>
+                    <agent classname="org.jini.projects.neon.annotations.tests.SimplePOJO" number="1" configuration="file:conf/POJO.config"/>
+                    <agent classname="org.jini.projects.neon.annotations.tests.ServiceDependentPOJO" number="1" configuration="file:conf/svcPOJO.config"/>
+                    <!--                     					<agent classname="org.jini.projects.neon.samples.neonbb.infrastructure.AthenaAgentImpl" number="1"/>
+                     <agent classname="org.jini.projects.neon.samples.neonbb.gui.ThreadAgentImpl" number="1"/>
+                    -->
+                    <agent classname="org.jini.projects.neon.agents.sensors.TimeSensor" number="1"/>
+                    <!--    <agent classname="org.jini.projects.neon.agents.sensors.TimeListener" number="1"/>-->
+                    
+                    <agent classname="org.jini.projects.neon.web.sample.SimpleWebAgent" number="1"/>
+                    <agent classname="org.jini.projects.neon.vertigo.management.SliceAgentImpl" number="1" configuration="file:conf/slicemgr.config"/>
+                    <agent classname="org.jini.projects.neon.neontests.tutorial.simple.HelloAgentImpl" number="1"/>
+                   <!-- <agent classname="org.jini.projects.neon.neontests.tutorial.simple.AnyoneThereAgent" number="1" /> -->
+					
+                    <comment>JavaSpaceOps examples</comment>
+                    <comment> Uses spacename: TestSpace</comment>
+                    <agent classname="org.jini.projects.neon.transactions.tests.JavaSpaceOpsAgent" number="1" waitafterinit="1" configuration="file:conf/JavaSpaceOps.config"/>
+                    <comment>Uses spacename: ERRORSPACE</comment>
+                    <agent classname="org.jini.projects.neon.transactions.tests.JavaSpaceOpsAgent"  waitafterinit="1" number="1" configuration="file:conf/JavaSpaceOps2.config"/>
+                   <agent classname="org.jini.projects.neon.transactions.tests.EmployeeAgent" number="1" configuration="file:conf/JavaSpaceOps2.config"/>
+                   <agent classname="org.jini.projects.neon.transactions.tests.UpdaterAgent" number="2" waitafterinit="1" configuration="file:conf/JavaSpaceOps.config"/>
+                    <agent classname="org.jini.projects.neon.transactions.tests.UpdateAgentAbort" number="2" waitafterinit="1" configuration="file:conf/JavaSpaceOps.config"/>
+                    <agent classname="org.jini.projects.neon.transactions.tests.UpdateAgentCommit" number="2" waitafterinit="1" configuration="file:conf/JavaSpaceOps.config"/>                    
+                
+                    <agent classname="org.jini.projects.neon.tasks.tests.TaskCreator" number="1" configuration="file:conf/taskCreator.config"/>
+                    
+                    <agent classname="org.jini.projects.neon.tasks.SpaceTaskManagementImpl" number="1" waitafterinit="5" configuration="file:conf/taskManager.config"/>
+                    <agent classname="org.jini.projects.neon.tasks.TaskAgent" number="1" configuration="file:conf/taskAgentReverse.config"/>
+                    
+                    <agent classname="org.jini.projects.neon.community.athena.AthenaAgentImpl" number="5" configuration="file:config/athenaagent.config"/>
+                    
+                     <agent classname="org.jini.projects.neon.integration.AthenaSpaceIntegration" number="5" configuration="file:config/athenaIntegration.config"/>
+                   
+                    <!--  <agent classname="org.jini.projects.neon.examples.data.DataAgentImpl" number="2" waitafterinit="1" configuration="file:conf/dataagent.config"/>
+                    <agent classname="org.jini.projects.neon.examples.data.DBQueryImpl" number="2" waitafterinit="1"/>
+                    -->
+                    <comment>End JavaSpaceOps examples</comment>
+
+                </pre>
+                <wait time="10"/>
+                <post>
+                    <!-- <agent classname="org.jini.projects.neon.recovery.RecoveryAgent" number="1" configuration="file:d:/development/workspace/neon/src/conf/neon.config"/>-->
+                </post>
+            </hostAgents>
+            <delegates>
+                <delegate type="producerinfo" interfaceclass="org.jini.projects.neon.collaboration.ProducerInterest" delegateclass="org.jini.projects.neon.dynproxy.invoker.ProducerHandler"/>
+                <delegate type="Transaction" interfaceclass="org.jini.projects.neon.host.transactions.TransactionalResource" delegateclass="org.jini.projects.neon.dynproxy.invoker.PropagatedTransactionDelegate"/>                
+            </delegates>
+        </domain>
+        <domain name="testDomain" allowCallsOut="Global">					
+            <hostAgents>
+                <pre>
+                    <agent classname="org.jini.projects.neon.callbacks.CallbacksAgentImpl" number="1"/>
+                </pre>
+                <wait time="10"/>
+                <post>
+                    <!--<agent classname="org.jini.projects.neon.recovery.RecoveryAgent" number="1" configuration="file:conf/neon.config"/>-->
+                </post>
+            </hostAgents>
+            <delegates>
+                <delegate type="producerinfo" interfaceclass="org.jini.projects.neon.collaboration.ProducerInterest" delegateclass="org.jini.projects.neon.dynproxy.invoker.ProducerHandler"/>
+                <delegate type="Transaction" interfaceclass="org.jini.projects.neon.host.transactions.TransactionalResource" delegateclass="org.jini.projects.neon.dynproxy.invoker.PropagatedTransactionDelegate"/>
+               
+            </delegates>
+        </domain>
+    </domains>
+</startup>

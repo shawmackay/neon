@@ -1,0 +1,46 @@
+Building from Source
+----------------------------
+
+Neon uses the Ant utility as it's build process. So I will discuss that way of doing things
+
+Dependencies
+Neon requires the following libraries to be available
+
+1) Jini 2.1
+2) ServiceUI
+3) JAXB and JAXP (From Java We Services Developer Pack 1.3 )
+4) Current stable version of JMX (although these classes can be removed)
+5) Apache CXF - for Web Services Binding - this also provides the Jetty libraries
+6) J2SDK tools.jar
+7) Saxon 8 - for XSLT processing
+8) Glyph - for using Compile time annotations (included)
+
+
+Ant properties
+The ant build can recognise between a Unix and a Windows build, and 
+you will need to set a few properties in either the unixinit or win32init targets
+	javl - points to a directory where you're general java libraries can be found
+	xind - points to the installation directory of xindice
+	jinl - points to the directory where your Jini 2.0 libraries can be located
+	jaxbhome - the installation root of the JWSDP
+	apolloloc - location of the apollo libraries (as bundled with Neon)
+	www.root - the base url for the codebase
+	www.dir - the physical directory that the neon dl jars will be stored to
+	
+To build everything - ant all
+To recompile and rejar the Neon src - ant dist
+To recompile the JAXB schemas - ant runxjc
+To recompile the Javadocs - ant javadoc
+
+then locate the dist/neon directory in the directory above 'src'
+and type '. runneon.sh' or 'runneon.bat'
+
+If all went well Neon should begin to run and you should see several initialisation messages.
+
+From here follow the tutorial in docs/NeonTutorial.pdf
+
+
+IMPORTANT NOTES REGARDING BUILD PROCESS
+Neon auto generates the startup scripts, and configuration files (apart from startup.xml), so 
+you will need to change the ant script so that anyt changes you make don't get overwrritten.
+MOst importantly you will need to change the lookup groups in neon.config

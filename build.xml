@@ -1,0 +1,952 @@
+<?xml version="1.0"?>
+<project name="neon" default="dist" basedir=".">
+	<!-- set global properties for this build -->
+	<property file="build.properties" />
+	<taskdef name="install" classname="org.jini.projects.lamplighter.installer.LamplighterTask" classpath="lib/lamplighter.jar" />
+	<taskdef name="apt" classname="org.apache.tools.ant.taskdefs.Apt" classpath="lib/ant-apt.jar" />
+	<taskdef name="classdepandjar" classname="org.jini.rio.tools.ant.ClassDepAndJarTask">
+		<classpath location="lib/classdepandjar.jar" />
+	</taskdef>
+	<target name="init" depends="mkdirs">
+		<echo message="Continuing init....." />
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/core" />
+		<mkdir dir="${build.jvm14}" />
+		<mkdir dir="${classes.jvm14.intf}" />
+		<mkdir dir="${classes.jvm14.dl}" />
+		<mkdir dir="${classes}" />
+		<mkdir dir="${classes.samples}" />
+		<mkdir dir="${classes.tests}" />
+		<path id="neonaptFactory">
+			<fileset dir="${basedir}">
+				<include name="neonapt.jar" />
+			</fileset>
+		</path>
+		<property name="glyph" value="lib/glyph.jar" />
+		<path id="project.classpath">
+			<fileset dir="${jini.home.lib}">
+				<include name="jini*.jar" />
+				<include name="sun-util.jar" />
+				<include name="jsk-platform.jar" />
+				<include name="tools.jar" />
+			</fileset>
+			<!--<fileset dir="${java.home}/../lib" includes="tools.jar" /> -->
+			<!-- Include specific project directories -->
+			<fileset dir="lib">
+				<include name="commons*.jar" />
+			</fileset>
+			<pathelement location="${zenith.loc}" />
+			<pathelement location="${exportMgr.loc}" />
+			<pathelement location="${eros.loc}" />
+			<pathelement location="${thor.loc}" />
+			<pathelement location="${athena.loc}" />
+			<pathelement location="${swinglayout.loc}" />
+			<pathelement location="${serviceui.loc}" />
+			<fileset dir="${cxf.loc}/lib">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${jetty.loc}/lib">
+							<include name="*.jar"/>
+						</fileset>
+						
+						<fileset dir="${jetty.loc}/lib/jsp-2.1">
+										<include name="*.jar"/>
+									</fileset>
+							
+							<fileset dir="${jetty.loc}/lib">
+											<include name="*.jar"/>
+										</fileset>
+			
+			<fileset dir="${saxon.loc}">
+				<include name="saxon8.jar" />
+				<include name="saxon8-dom.jar" />
+			</fileset>
+			<fileset dir="lib">
+				<include name="junit.jar" />
+				<!--<include name="jetty*.jar" />
+				<include name="jstl*.jar"/>
+				<include name="jsp*.jar"/>
+				<include name="servlet*.jar"/>-->
+			</fileset>
+
+			<!--<fileset dir="${tomcat.home}/server/lib">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${tomcat.home}/common/lib">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${tomcat.home}/shared/lib">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${tomcat.home}/bin">
+				<include name="*.jar" />
+			</fileset>-->
+			<fileset dir="${java.libs.loc}">
+				<include name="serviceui-1.1a.jar" />
+
+				<include name="junit.jar" />
+				<!-- include all the required JAXB classes -->
+			</fileset>
+			<pathelement location="${glyph}" />
+			<pathelement location="${classes}" />
+			<pathelement location="${build}/tests" />
+			<pathelement location="${build}/samples" />
+		</path>
+
+		<path id="runtime.classpath">
+			<fileset dir="${jini.home.lib}">
+				<include name="jini*.jar" />
+				<include name="sun-util.jar" />
+				<include name="jsk-platform.jar" />
+				<include name="tools.jar" />
+			</fileset>
+			<!--<fileset dir="${java.home}/../lib" includes="tools.jar" /> -->
+			<!-- Include specific project directories -->
+			<fileset dir="lib">
+				<include name="commons*.jar" />
+			</fileset>
+			<pathelement location="${zenith.loc}" />
+			<pathelement location="${exportMgr.loc}" />
+			<pathelement location="${eros.loc}" />
+			<pathelement location="${thor.loc}" />
+			<pathelement location="${athena.loc}" />
+			<pathelement location="${swinglayout.loc}" />
+			<fileset dir="${cxf.loc}/lib">
+				<include name="*.jar" />
+			</fileset>
+			
+			<fileset dir="${jetty.loc}/lib">
+				<include name="*.jar"/>
+			</fileset>
+			
+			<fileset dir="${jetty.loc}/lib/jsp-2.1">
+							<include name="*.jar"/>
+						</fileset>
+				
+				<fileset dir="${jetty.loc}/lib">
+								<include name="*.jar"/>
+							</fileset>
+				
+			<fileset dir="${saxon.loc}">
+				<include name="saxon8.jar" />
+				<include name="saxon8-dom.jar" />
+			</fileset>
+			<fileset dir="lib">
+				<include name="junit.jar" />
+				<include name="jetty*.jar" />
+				<include name="mysql-connector-java-5.0.6-bin.jar" />
+				<include name="jstl*.jar"/>
+				<include name="jsp*.jar"/>
+				<include name="servlet*.jar"/>
+			</fileset>
+			<pathelement location="${saxon.loc}" />
+			<fileset dir="${tomcat.home}/server/lib">
+				<include name="*.jar" />
+			</fileset>
+		
+			<pathelement location="${serviceui.loc}" />
+			<pathelement location="${glyph}" />
+			<pathelement location="${classes}" />
+			<pathelement location="${lib}/neon-tests.jar" />
+			<pathelement location="${lib}/neon-samples.jar" />
+		</path>
+
+		<property name="glyph" value="lib/glyph.jar" />
+
+		<!-- Create the build directory structure used by compile -->
+	</target>
+
+
+	<target name="compile" depends="init">
+
+		<echo message="Compiling J2SE 5.0 base build....." />
+		<echo message="Zenith is @ ${zenith.loc}" />
+		<echo message="Processing with Apt" />
+		<!--
+        <apt factorypathref="neonaptFactory" srcdir="${src}" destdir="${classes}" fork="true" preprocessdir="${basedir}/.apt_generated">
+            <exclude name="**/*Test.java" />
+            <classpath refid="project.classpath" />
+        </apt>
+-->
+
+		<!--<javac srcdir="${src}" destdir="${classes}">
+			<exclude name="**/*Test.java" />
+			<classpath refid="project.classpath" />
+		</javac>
+-->
+
+		<property name="scriptClassPath" refid="project.classpath" />
+		<property name="classdepbuildfile" value="core-classdep.build.xml" />
+		<path id="glyphFactory">
+			<pathelement location="${glyph}" />
+			<fileset dir="${jini.home.lib}">
+				<include name="tools.jar" />
+			</fileset>
+		</path>
+		<mkdir dir="${build}/generated" />
+		<apt factorypathref="glyphFactory" destdir="${classes}" factory="org.jini.glyph.GlyphFactory" srcdir="${src}" preprocessdir=".apt_src" fork="true" classpathref="project.classpath" debug="true">
+			<option name="jiniRoot" value="${jini.home.lib}" />
+			<option name="scriptClasspath" value="${scriptClassPath}" />
+			<option name="projectName" value="neon-gen" />
+			<option name="dl_port" value="8086" />
+			<option name="dl_path" value="lib" />
+			<option name="dl_file" value="neon-gen-dl.jar" />
+			<option name="groupCodebase" value="http://localhost:8086/lib/group-dl.jar" />
+			<option name="classdepBuildFile" value="${classdepbuildfile}" />
+			<option name="classdepBuildRoot" value="${classes}" />
+			<classpath refid="project.classpath" />
+
+			<include name="**/*.java" />
+
+		</apt>
+		<echo message="Calling classdep build for neon-gen" />
+		<ant antfile="${classdepbuildfile}" target="buildclassdep" inheritrefs="true" />
+		<delete file="${classdepbuildfile}" />
+		<copy todir="${dist}/conf/expdir" failonerror="false">
+					<fileset dir="${classes}/conf/expdir">
+						<include name="**" />
+					</fileset>
+				</copy>
+		<apt factorypathref="glyphFactory" destdir="${build}/tests" factory="org.jini.glyph.GlyphFactory" srcdir="${tests}" preprocessdir=".apt_src" fork="true" classpathref="project.classpath" debug="true">
+			<option name="jiniRoot" value="${jini.home.lib}" />
+			<option name="scriptClasspath" value="${scriptClassPath}" />
+			<option name="projectName" value="neon-tests-gen" />
+			<option name="dl_port" value="8086" />
+			<option name="dl_path" value="lib" />
+			<option name="dl_file" value="neon-tests-dl.jar" />
+			<option name="groupCodebase" value="http://localhost:8086/lib/group-dl.jar" />
+			<option name="classdepBuildFile" value="${classdepbuildfile}" />
+			<option name="classdepBuildRoot" value="${build}/tests" />
+			<classpath refid="project.classpath" />
+
+			<include name="**/*.java" />
+
+		</apt>
+		<ant antfile="${classdepbuildfile}" target="buildclassdep" inheritrefs="true" />
+		<delete file="${classdepbuildfile}" failonerror="false" />
+		<copy todir="${dist}/conf/expdir" failonerror="false">
+			<fileset dir="${build}/tests/conf/expdir">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<apt factorypathref="glyphFactory" destdir="${build}/samples" factory="org.jini.glyph.GlyphFactory" srcdir="${samples}" preprocessdir=".apt_src" fork="true" classpathref="project.classpath">
+			<option name="jiniRoot" value="${jini.home.lib}" />
+			<option name="scriptClasspath" value="${scriptClassPath}" />
+			<option name="projectName" value="neon-samples-gen" />
+			<option name="dl_port" value="8086" />
+			<option name="dl_path" value="lib" />
+			<option name="dl_file" value="neon-samples-gen-dl.jar" />
+			<option name="groupCodebase" value="http://localhost:8086/lib/group-dl.jar" />
+			<option name="classdepBuildFile" value="${classdepbuildfile}" />
+			<option name="classdepBuildRoot" value="${build}/samples" />
+			<classpath refid="project.classpath" />
+
+			<include name="**/*.java" />
+
+		</apt>
+		<ant antfile="${classdepbuildfile}" target="buildclassdep" inheritrefs="true" />
+		<delete file="${classdepbuildfile}" failonerror="false" />
+		<copy todir="${dist}/conf/expdir" failonerror="false">
+					<fileset dir="${build}/samples/conf/expdir">
+						<include name="**" />
+					</fileset>
+				</copy>
+
+		<javac classpathref="project.classpath" srcdir="${samples}" destdir="${build}/samples">
+
+			<include name="**/*.java" />
+
+		</javac>
+
+
+		<echo message="Compiling interface classes" />
+		<javac destdir="${classes.jvm14.intf}" srcdir="${src}">
+			<include name="org/jini/projects/neon/agents/*.java" />
+			<include name="org/jini/projects/neon/agents/constraints/*.java" />
+			<include name="org/jini/projects/neon/agents/sensors/*.java" />
+			<include name="org/jini/projects/neon/agents/callbacks/CallbacksIntf.java" />
+			<include name="org/jini/projects/neon/host/AgentContext.java" />
+			<include name="org/jini/projects/neon/host/NoSuchAgentException.java" />
+			<include name="org/jini/projects/neon/agents/*.java" />
+			<include name="org/jini/projects/neon/host/transactions/TransactionAgent.java" />
+			<include name="org/jini/projects/neon/host/transactions/TransactionalResource.java" />
+			<include name="org/jini/projects/neon/host/transactions/NonTransactionalResource.java" />
+			<include name="org/jini/projects/neon/host/transactions/Transactional.java" />
+			<include name="org/jini/projects/neon/query/KBaseIntf.java" />
+			<include name="org/jini/projects/neon/recovery/KillerAgent.java" />
+			<include name="org/jini/projects/neon/recovery/CheckpointAgent.java" />
+			<include name="org/jini/projects/neon/service/ServiceAgent.java" />
+			<include name="org/jini/projects/neon/service/MonitorAgent.java" />
+			<include name="org/jini/projects/neon/service/TransferAgent.java" />
+			<include name="org/jini/projects/neon/service/AgentService.java" />
+			<include name="org/jini/projects/neon/service/CombinedService.java" />
+			<include name="org/jini/projects/neon/render/RenderAgent.java" />
+			<include name="org/jini/projects/neon/render/PresentableAgent.java" />
+			<include name="org/jini/projects/neon/web/WebUtils.java" />
+			<include name="org/jini/projects/neon/render/BadFormatException.java" />
+			<exclude name="**/*Test.java" />
+			<classpath refid="project.classpath" />
+		</javac>
+
+		<echo message="Compiling WebApp" />
+		<mkdir dir="${classes.webapp}" />
+		<javac srcdir="${webapp.src}" destdir="${classes.webapp}">
+			<exclude name="**/*Test.java" />
+			<classpath refid="project.classpath" />
+		</javac>
+
+		<echo message="Compiling dl classes for 1.4 VMs" />
+		<javac destdir="${classes.jvm14.dl}" srcdir="${src}" target="1.5" debug="true">
+			<include name="**/*Stub.class" />
+			<include name="org/jini/projects/neon/service/AgentService.java" />
+			<include name="org/jini/projects/neon/agents/*.java" />
+			<include name="org/jini/projects/neon/agents/constraints/*.java" />
+			<include name="org/jini/projects/neon/util/AgentDeploy*.java" />
+			<include name="org/jini/projects/neon/service/CodebaseObject.java" />
+			<include name="org/jini/projects/neon/service/AgentBackendService.java" />
+			<include name="org/jini/projects/neon/service/CombinedService.java" />
+			<include name="org/jini/projects/neon/service/admin/AgentAdmin.java" />
+			<include name="org/jini/projects/neon/service/admin/*Description.java" />
+			<include name="org/jini/projects/neon/service/admin/*Panel.java" />
+			<include name="org/jini/projects/neon/service/admin/AgentServiceAdmin.java" />
+			<include name="org/jini/projects/neon/dynproxy/AgentProxyInfo.java" />
+			<include name="org/jini/projects/neon/dynproxy/ExportedAgentProxy.java" />
+			<include name="org/jini/projects/neon/dynproxy/MethodInvocation.java" />
+			<include name="org/jini/projects/neon/service/admin/constrainable/**.java" />
+			<include name="org/jini/projects/neon/service/AgentCallback.java" />
+			<include name="org/jini/projects/neon/service/ActivatableServiceStartup.java" />
+			<include name="org/jini/projects/neon/service/ServiceStartupIntf.java" />
+			<include name="org/jini/projects/neon/service/NeonServiceType.java" />
+			<include name="org/jini/projects/neon/service/constrainable/**.java" />
+			<include name="org/jini/projects/neon/agents/util/meta/*.class" />
+			<include name="org/jini/projects/neon/host/**Exception.java" />
+			<include name="org/jini/projects/neon/host/VirtualProducer.java" />
+			<include name="org/jini/projects/neon/agents/AgentState.java" />
+			<include name="org/jini/projects/neon/ui/DomainDetailsPanel.java" />
+			<include name="org/jini/projects/neon/agents/Agent.java" />
+			<include name="org/jini/projects/neon/agents/AgentIdentity.java" />
+			<include name="org/jini/projects/neon/agents/AgentConstraints.java" />
+			<include name="org/jini/projects/neon/agents/util/*Entry.java" />
+			<include name="org/jini/projects/neon/util/AgentSetHandler.java" />
+			<include name="org/jini/projects/neon/util/AgentDeployDefinition" />
+			<include name="org/jini/projects/neon/util/encryption/CryptoHolder.java" />
+			<include name="org/jini/projects/neon/util/encryption/EncryptedHolder.java" />
+			<include name="org/jini/projects/neon/agents/util/meta/*.java" />
+			<include name="org/jini/projects/neon/util/encryption/CryptoHolder.java" />
+			<include name="org/jini/projects/neon/util/encryption/EncryptedHolder.java" />
+			<include name="org/jini/projects/neon/service/start/Delegate.java" />
+			<include name="org/jini/projects/neon/host/Response.java" />
+			<include name="org/jini/projects/neon/host/AgentDomain.java" />
+			<include name="org/jini/projects/neon/host/AgentContext.java" />
+			<include name="org/jini/projects/neon/host/transactions/TransactionalResource.java" />
+			<include name="org/jini/projects/neon/host/transactions/RemoteTransactionalResource.java" />
+			<include name="org/jini/projects/neon/host/transactions/TransactionAccessor.java" />
+
+			<include name="org/jini/projects/neon/host/transactions/constrainable/*Proxy.java" />
+			<include name="org/jini/projects/neon/vertigo/application/ApplicationRef.java" />
+			<include name="org/jini/projects/neon/vertigo/slice/Slice.java" />
+			<include name="org/jini/projects/neon/vertigo/slice/SliceHolder.java" />
+			<include name="org/jini/projects/neon/vertigo/slice/Deployer.java" />
+			<include name="org/jini/projects/neon/vertigo/management/SIDEntry.java" />
+			<include name="org/jini/projects/neon/ui/ConsoleUIFact*.java" />
+			<include name="org/jini/projects/neon/ui/AdminConsole*.java" />
+			<include name="org/jini/projects/neon/ui/NeonAdmin*.java" />
+			<include name="org/jini/projects/neon/ui/NeonAgentPanel*.java" />
+			<include name="org/jini/projects/neon/ui/NeonService*.java" />
+			<include name="org/jini/projects/neon/ui/support/**.java" />
+			<include name="org/jini/projects/neon/ui/ServiceConnector*.java" />
+			<include name="org/jini/projects/neon/util/MethodViewer*.java" />
+			<include name="org/jini/projects/neon/agents/sensors/NeonFile*.java" />
+			<include name="org/jini/projects/neon/agents/sensors/Sensor*.java" />
+			<include name="org/jini/projects/neon/collaboration/Advertiser.java" />
+			<include name="org/jini/projects/neon/collaboration/Collaborative.java" />
+			<include name="org/jini/projects/neon/collaboration/CollabAdvert.java" />
+			<include name="org/jini/projects/neon/host/transactions/TransactionAgent.java" />
+			<include name="org/jini/projects/neon/host/transactions/TransactionalResource.java" />
+			<include name="org/jini/projects/neon/host/transactions/NonTransactionalResource.java" />
+			<include name="org/jini/projects/neon/host/transactions/Transactional.java" />
+			<include name="org/jini/projects/neon/query/KBaseIntf.java" />
+			<include name="org/jini/projects/neon/recovery/KillerAgent.java" />
+			<include name="org/jini/projects/neon/recovery/CheckpointAgent.java" />
+			<include name="org/jini/projects/neon/service/ServiceAgent.java" />
+			<include name="org/jini/projects/neon/service/MonitorAgent.java" />
+			<include name="org/jini/projects/neon/service/TransferAgent.java" />
+			<include name="org/jini/projects/neon/render/RenderAgent.java" />
+			<include name="org/jini/projects/neon/tasks/TaskEntry.java" />
+			<include name="org/jini/projects/neon/render/PresentableAgent.java" />
+			<include name="org/jini/projects/neon/render/BadFormatException.java" />
+			<exclude name="**/*Test.java" />
+			<classpath refid="project.classpath" />
+		</javac>
+
+	</target>
+
+
+
+	<target name="jarSrc" depends="init">
+		<jar compress="true" jarfile="${src}/${ant.project.name}src.jar">
+			<fileset dir="${src}" includes="**/*.java" />
+			<fileset dir="${src}" includes="**/*.xml" />
+			<fileset dir="${src}" includes="**/*.config" />
+			<fileset dir="${src}" includes="**.txt" />
+			<fileset dir="${src}" includes="**/*.css" />
+			<fileset dir="${src}" includes="**/*.policy" />
+			<fileset dir="${src}" includes="jdtags" />
+		</jar>
+
+	</target>
+
+	<target name="buildandrun" depends="dist">
+		<java fork="true" classname="org.jini.projects.neon.service.ServiceStartup" dir="${dist}">
+			<jvmarg value="-Djava.security.policy=conf/policy.all" />
+			<jvmarg value="-Dcom.sun.management.jmxremote" />
+			<jvmarg value="-ea" />
+			<classpath refid="project.classpath" />
+			<arg value="conf/neon.config" />
+		</java>
+	</target>
+
+	<target name="run" depends="init,copyconfig">
+
+
+		<java fork="true" classname="org.jini.projects.neon.service.ServiceStartup" dir="${dist}">
+			<jvmarg value="-Djava.security.policy=conf/policy.all" />
+			<jvmarg value="-Dcom.sun.management.jmxremote" />
+			<jvmarg value="-ea" />
+			<classpath refid="runtime.classpath" />
+
+
+			<arg value="conf/neon.config" />
+		</java>
+	</target>
+
+
+	<target name="expandjars" unless="alreadyexpanded">
+		<mkdir dir="${classes}/tmp" />
+		<unjar src="${eros.loc}" dest="${classes}/tmp" />
+		<unjar src="${thor.loc}" dest="${classes}/tmp" />
+		<unjar src="${jini.home.lib}-dl/sdm-dl.jar" dest="${classes}/tmp" />
+		<unjar src="${jini.home.lib}/jini-ext.jar" dest="${classes}/tmp" />
+		<unjar src="${jini.home.lib}/sun-util.jar" dest="${classes}/tmp" />
+		<unjar src="${zenith.intf.loc}" dest="${classes}/tmp" />
+		<unjar src="${serviceui.loc}" dest="${classes}/tmp" />
+			
+		<unjar src="${swinglayout.loc}" dest="${classes}/tmp" />
+	</target>
+
+	<target name="mkdirs">
+		<mkdir dir="${dist.root}" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${lib}" />
+		<mkdir dir="${dl.dir}" />
+		<mkdir dir="${backup}" />
+		<mkdir dir="${webapp.dir}" />
+		<mkdir dir="${conf}" />
+		<mkdir dir="${logs}" />
+		<available file="${classes}/tmp" type="dir" property="alreadyexpanded" />
+	</target>
+
+	<target name="jar" depends="compile">
+
+		<!-- Build the main service -->
+		<!--  <delete file="${jar}" failonerror="no" />
+        <delete file="${dl-jar}" failonerror="no" /> -->
+		<copy todir="${classes}">
+			<fileset dir="${src}">
+				<include name="**/*.properties" />
+				<include name="**/*.ser" />
+				<include name="**/*.jpg" />
+				<include name="**/*.png" />
+				<include name="**/*.betwixt" />
+				<include name="**/*.xml" />
+				<include name="**/*.xsl" />
+				<include name="**/*.css" />
+			</fileset>
+		</copy>
+
+
+		<copy todir="${build}/samples">
+			<fileset dir="${samples}">
+				<include name="**/*.properties" />
+				<include name="**/*.ser" />
+				<include name="**/*.jpg" />
+				<include name="**/*.png" />
+				<include name="**/*.betwixt" />
+				<include name="**/*.xml" />
+				<include name="**/*.xsl" />
+				<include name="**/*.css" />
+				<include name="**/*.js" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build}/tests">
+			<fileset dir="${tests}">
+				<include name="**/*.properties" />
+				<include name="**/*.ser" />
+				<include name="**/*.jpg" />
+				<include name="**/*.png" />
+				<include name="**/*.betwixt" />
+				<include name="**/*.xml" />
+				<include name="**/*.xsl" />
+				<include name="**/*.css" />
+			</fileset>
+		</copy>
+
+
+		<mkdir dir="${classes}/tmp/META-INF" />
+		<echo file="${classes}/tmp/META-INF/PREFERRED.LIST">
+            PreferredResources-Version: 1.0
+            Preferred: false
+
+            Name: org.jini.projects.neon.neontests/tutorial/-
+            Preferred: true
+        </echo>
+		<copy todir="${classes}/org" verbose="true">
+			<fileset dir="${src}/org">
+				<include name="**/*.xsl" />
+			</fileset>
+
+		</copy>
+		<jar basedir="${classes}" compress="true" jarfile="${jar}">
+			<exclude name="**/*.java" />
+			<exclude name="**/*.form" />
+			<exclude name="*.jar" />
+			<exclude name="tmp/**" />
+		</jar>
+
+		<jar basedir="${build}/samples" compress="true" jarfile="${lib}/neon-samples.jar">
+			<exclude name="**/*.java" />
+			<exclude name="**/*.form" />
+			<exclude name="*.jar" />
+			<exclude name="tmp/**" />
+		</jar>
+
+		<jar basedir="${build}/tests" compress="true" jarfile="${lib}/neon-tests.jar">
+			<exclude name="**/*.java" />
+			<exclude name="**/*.form" />
+			<exclude name="*.jar" />
+			<exclude name="tmp/**" />
+		</jar>
+
+		<jar jarfile="${lib}/neon-depend.jar">
+			<fileset dir="${classes}/tmp" includes="org/jini/projects/eros/**/*.class" />
+			<fileset dir="${classes}/tmp" includes="org/jini/projects/thor/**/*.class" />
+		</jar>
+
+		<copy file="${zenith.loc}" todir="${lib}" />
+		<copy todir="${dl.dir}">
+			<fileset dir="lib">
+				<include name="zenith*-dl.jar" />
+			</fileset>
+		</copy>
+		<copy file="${exportMgr.loc}" todir="${lib}" />
+
+
+
+		
+		<jar compress="true" jarfile="${dist}/lib/AgentDeployer.jar">
+			<fileset dir="${classes}/tmp" includes="com/sun/jini/system/*.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/util/*.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/agents/AgentConstraints.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/agents/Agent.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/agents/AgentState.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/agents/AgentIdentity.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/agents/Meta.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/agents/AbstractAgent.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/collaboration/Advertiser.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/collaboration/Collaborative.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/collaboration/CollabAdvert.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/host/AgentContext.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/service/AgentService.class" />
+			<fileset dir="${classes}/tmp" includes="org/jini/projects/zenith/endpoints/Producer.class" />
+			<fileset dir="${classes}/tmp" includes="org/jini/projects/zenith/messaging/messages/Message.class" />
+		</jar>
+
+		
+
+
+
+		<jar compress="true" jarfile="${dist}/lib/sail50.jar">
+			<fileset dir="${classes}" includes="org/jini/projects/neon/agents/*.class" />
+			<fileset dir="${classes}" includes="org/jini/projects/neon/annotations/*.class" />
+			
+			<fileset dir="${classes}" includes="org/jini/projects/neon/service/ServiceAgent.class" />
+			<fileset dir="${classes}" includes="org/jini/projects/neon/service/TransferAgent.class" />
+			<fileset dir="${classes}" includes="org/jini/projects/neon/service/MonitorAgent.class" />
+			<fileset dir="${classes}" includes="org/jini/projects/neon/render/*Agent.class" />
+			<fileset dir="${classes}" includes="org/jini/projects/neon/render/*Exception.class" />
+			<fileset dir="${classes}" includes="org/jini/projects/neon/render/EngineInstruction.class" />
+
+			<fileset dir="${classes}" includes="org/jini/projects/neon/collaboration/*.class" />
+			<fileset dir="${classes}" includes="org/jini/projects/neon/agents/util/meta/*.class"/>
+			<fileset dir="${classes}" includes="org/jini/projects/neon/host/AgentContext.class"/>
+			<fileset dir="${classes}" includes="org/jini/projects/neon/host/*Exception.class"/>
+			<fileset dir="${classes}/tmp"  includes="org/jini/projects/zenith/**/*.class"/>
+		</jar>
+
+		<jar compress="true" jarfile="${cli-dl-jar}">
+			<fileset dir="${classes}" includes="**/AgentCallback.class" />
+			<fileset dir="${classes}" includes="org/jini/projects/neon/neontests/**/*.class" />
+			<fileset dir="${classes}/tmp" includes="META-INF/*.*" />
+		</jar>
+		<jar compress="true" jarfile="${dl-jar}">
+			<fileset dir="${classes.jvm14.dl}" includes="**/*.class" />
+			<fileset dir="${build}/tests" includes="org/jini/projects/neon/transactions/*Entry.class" />
+			<fileset dir="${src}" includes="org/jini/projects/neon/service/wizard.png" />
+			<fileset dir="${src}" includes="org/jini/projects/neon/service/*.jpg" />
+			<fileset dir="${src}" includes="org/jini/projects/neon/ui/images/*" />
+
+			<!-- Required Jini and serviceUI classes -->
+			<fileset dir="${classes}/tmp" includes="net/jini/entry/*.class" />
+			<fileset dir="${classes}/tmp" includes="net/jini/lookup/*Stub.class" />
+			<fileset dir="${classes}/tmp" includes="net/jini/lookup/ServiceIDListener.class" />
+			<fileset dir="${classes}/tmp" includes="net/jini/discovery/DiscoveryListener.class" />
+			<fileset dir="${classes}/tmp" includes="net/jini/lookup/entry/**/*.class" />
+			<fileset dir="${classes}/tmp" includes="net/jini/lookup/ui/**.class" />
+			<fileset dir="${classes}/tmp" includes="net/jini/lookup/ui/attribute/*.class" />
+			<fileset dir="${classes}/tmp" includes="com/artima/lookup/util/*.class" />
+			<fileset dir="${classes}/tmp" includes="org/jdesktop/**/*.class" />
+
+			<fileset dir="${classes}/tmp" includes="org/jini/projects/zenith/endpoints/Producer.class" />
+			<!--Neon service UI Classes-->
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/ui/ConsoleUIFact*.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/ui/NeonAdmin*.class" />
+			<fileset dir="${classes.jvm14.dl}" includes="org/jini/projects/neon/ui/ServiceConnector*.class" />
+		</jar>
+		<jar file="${intf-jar}" compress="true">
+
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/agents/*.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/agents/constraints/*.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/agents/sensors/*.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/agents/callbacks/CallbacksAgent.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/host/AgentContext.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/host/NoSuchAgentException.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/host/transactions/TransactionAgent.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/host/transactions/TransactionalResource.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/host/transactions/NonTransactionalResource.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/host/transactions/RemoteTransactionalResource.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/host/transactions/Transactional.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/query/KnowledgeBaseAgent.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/recovery/KillerAgent.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/recovery/CheckpointAgent.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/service/ServiceAgent.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/service/TransferAgent.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/service/AgentService.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/web/WebUtils.class" />
+			<fileset dir="${classes.jvm14.intf}" includes="org/jini/projects/neon/render/BadFormatException.class" />
+
+			<fileset dir="${classes}/tmp">
+				<include name="org/jini/projects/zenith/endpoints/Producer.class" />
+				<include name="org/jini/projects/zenith/endpoints/Subscriber.class" />
+				<include name="org/jini/projects/neon/collaboration/Message.class" />
+				<include name="org/jini/projects/neon/collaboration/CollabAdvert.class" />
+				<include name="org/jini/projects/neon/collaboration/Advertiser.class" />
+				<include name="org/jini/projects/neon/collaboration/Response.class" />
+				<include name="org/jini/projects/neon/collaboration/Collaborative.class" />
+			</fileset>
+		</jar>
+
+		<echo message="Building webapp" />
+		<war destfile="${webapp.dest}" webxml="${webapp.content}\WEB-INF\web.xml">
+			<classes dir="${classes.webapp}" />
+			<lib dir="${basedir}/lib">
+				<include name="jstl.jar" />
+				<include name="standard.jar" />
+				<include name="dwr.jar"/>
+				<include name="commons-logging.jar"/>
+			</lib>
+			<fileset dir="${webapp.content}">
+				<exclude name="WEB-INF" />
+			</fileset>
+		</war>
+
+		<echo message="Jar complete" />
+
+	</target>
+
+
+	<target name="createinstaller" depends="fullclean,dist,copyconfig">
+		<move file="${dist}/conf/neon.config" todir="${build}" />
+		<copy file="${src}/starting.html" todir="${dist}" />
+		<copy todir="${dist}/lib">
+			<fileset dir="${basedir}/lib" id="id">
+
+				<include name="*.jar" />
+				<exclude name="*-dl.jar" />
+				<exclude name="ant*.jar" />
+				<exclude name="jetty*.jar"/>
+				<exclude name="exportermanager.jar" />
+				<exclude name="lamplighter.jar" />
+			</fileset>
+		</copy>
+		<install productname="Neon" license="${src}/LICENSE.txt" readme="${src}/readme.txt" directorytojar="${dist}" outputName="${ant.project.name}${version}" launcherconfig="${src}/launcherconfig.xml" prerequisites="${src}/prerequisites.html" scriptpackdir="${src}/scriptpacks" logofile="${src}/org/jini/projects/neon/ui/neonemboss_small_red.jpg" />
+		<move todir="${dist}/conf" file="${build}/neon.config" />
+		<echo>Finished creating installer</echo>
+	</target>
+
+	<target name="samples" depends="dist">
+		<javac destdir="${classes.samples}" srcdir="samples">
+			<include name="**/*.java" />
+			<classpath refid="project.classpath" />
+		</javac>
+
+		<copy includeemptydirs="true" todir="${classes.samples}">
+			<fileset dir="samples">
+				<include name="**/*.xsl" />
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+		<jar file="${dist}/lib/neonsample.jar">
+			<fileset dir="${classes.samples}" includes="**/*.class" />
+			<fileset dir="${classes.samples}" includes="**/*.xsl" />
+			<fileset dir="${classes.samples}" includes="**/*.xml" />
+		</jar>
+
+	</target>
+
+
+	<target name="createfullinstaller" depends="fullclean,dist,javadoc,copyconfig">
+
+
+		<move file="${dist}/conf/neon.config" todir="${build}" />
+				<copy file="${src}/starting.html" todir="${dist}" />
+				<copy todir="${dist}/lib">
+					<fileset dir="${basedir}/lib" id="id">
+
+						<include name="*.jar" />
+						<exclude name="*-dl.jar" />
+						<exclude name="ant*.jar" />
+						<exclude name="jetty*.jar"/>
+						<exclude name="exportermanager.jar" />
+						<exclude name="lamplighter.jar" />
+					</fileset>
+				</copy>
+				<copy todir="${dist}/lib">
+							<fileset dir="${dist}/lib-dl" id="id">
+
+								<include name="*gen-dl.jar" />
+								
+							</fileset>
+						</copy>
+		<mkdir dir="${dist}/doc" />
+			<copy todir="${dist}/doc">
+				<fileset dir="${basedir}/www">
+					<include name="**/*.*" />
+					<exclude name="releases/*"/>
+					<exclude name="**/*.mov"/>
+				</fileset>
+			</copy>
+		<!--Remove index.html and replace with index2.html-->
+			<delete file="${dist}/doc/index.html" />
+			<move file="${dist}/doc/index2.html" tofile="${dist}/doc/index.html" />
+				<install productname="Neon" license="${src}/LICENSE.txt" readme="${src}/readme.txt" directorytojar="${dist}" outputName="${ant.project.name}${version}" launcherconfig="${src}/launcherconfig.xml" prerequisites="${src}/prerequisites.html" scriptpackdir="${src}/scriptpacks" logofile="${src}/org/jini/projects/neon/ui/neonemboss_small_red.jpg" />
+				<move todir="${dist}/conf" file="${build}/neon.config" />
+				<echo>Finished creating installer</echo>
+		
+	
+	
+	</target>
+
+	<target name="execute" depends="dist">
+		<java dir="${dist}" fork="true" classname="org.jini.projects.neon.service.ServiceStartup">
+
+			<jvmarg value="-Djava.security.policy=/home/calum/policy.all" />
+			<jvmarg value="-Djava.rmi.server.codebase=/home/calum/policy.all" />
+			<jvmarg value="-Djava.rmi.server.codebase='http://e0052sts3s/jinistubs/neon-dl.jar http://e0052sts3s/jinistubs/apollo2-dl.jar'" />
+			<jvmarg value="-Djava.security.auth.login.config=loki_jaas.config" />
+			<jvmarg value="-Xms20m" />
+			<arg value="conf/neon.config" />
+			<classpath refid="project.classpath" />
+		</java>
+	</target>
+
+
+
+	<target name="profile" depends="init" description="Profile Project">
+		<fail unless="netbeans.home">This target can only run inside the NetBeans IDE.</fail>
+
+		<nbprofiledirect>
+			<classpath refid="project.classpath" />
+		</nbprofiledirect>
+
+		<java dir="${dist}" fork="true" classname="org.jini.projects.neon.service.ServiceStartup">
+
+			<jvmarg value="-Djava.security.policy=conf/policy.all" />
+			<jvmarg value="-Dcom.sun.management.jmxremote" />
+			<jvmarg value="-ea" />
+			<jvmarg value="-Xms20m" />
+			<arg value="conf/neon.config" />
+			<classpath refid="project.classpath" />
+			<jvmarg value="${profiler.info.jvmargs.agent}" />
+		</java>
+	</target>
+
+	<!-- Uncomment the following target if you want to run additional glyph code generation -->
+
+	<!--
+	 
+	
+	<target name="generateExportable">
+		<property name="scriptClassPath" refid="project.classpath" />
+				<property name="classdepbuildfile" value="${build}/generated/classdep.build.xml" />
+				<path id="glyphFactory">
+					<pathelement location="${glyph}" />
+					<fileset dir="${jini.home.lib}">
+						<include name="tools.jar" />
+					</fileset>
+				</path>
+				<mkdir dir="${build}/generated" />
+				<apt factorypathref="glyphFactory" destdir="${build}/generated" factory="org.jini.glyph.GlyphFactory" srcdir="${src}" preprocessdir=".apt_src" fork="true" classpathref="project.classpath">
+					<option name="jiniRoot" value="${jini.home.lib}" />
+					<option name="scriptClasspath" value="${scriptClassPath}" />
+					<option name="projectName" value="neon-gen" />
+					<option name="dl_port" value="8086" />
+					<option name="dl_path" value="lib" />
+					<option name="dl_file" value="neon-gen-dl.jar" />
+					<option name="groupCodebase" value="http://localhost:8086/lib/group-dl.jar" />
+					<option name="classdepBuildFile" value="${classdepbuildfile}" />
+					<option name="classdepBuildRoot" value="${build}/generated" />
+					<classpath refid="project.classpath" />
+			
+					<include name="org/jini/projects/neon/render/RenderAgentImpl.java"/>
+					<include name="org/jini/projects/neon/host/transactions/tests/JavaSpaceOpsAgent.java"/>
+					<include name="org/jini/projects/neon/service/MonitorAgentImpl.java"/>
+					<include name="org/jini/projects/neon/neontests/tutorial/simple/HelloAgentImpl.java"/>
+					<include name="org/jini/projects/neon/neontests/tutorial/simple/HelloAgentImpl.java"/>
+				</apt>
+				<ant antfile="${classdepbuildfile}" target="buildclassdep" inheritrefs="true" />
+		
+		</target>
+
+-->
+
+	<target name="javadoc" depends="init">
+		<mkdir dir="${javadoc}" />
+		<echo>${user.dir}</echo>
+		<echo>-tagletpath ${classes} @${basedir}/jdtags</echo>
+		<javadoc destdir="${javadoc}" packagenames="org.jini.projects.neon.*" breakiterator="true" stylesheetfile="${src}/stylesheet.css">
+			<sourcepath>
+				<pathelement location="${src}" />
+			</sourcepath>
+			<classpath refid="project.classpath" />
+			<!--
+            
+            <link href="http: Link to j2sdk docs"/>
+            <link href="http: Link to Jini2.0 docs"/>
+            
+            -->
+		</javadoc>
+	</target>
+	<target depends="fullclean,dist, javadoc,createfullinstaller" name="all" />
+
+	<target depends="mkdistdirs" name="copyconfig">
+		<echo file="${dist}/conf/jaas.config">
+            /** Login Configuration for JAAS **/
+            Loki {
+            com.sun.security.auth.module.UnixLoginModule required debug=true;
+            };          
+        </echo>
+
+
+		<copy todir="${dist}/conf">
+					<fileset dir="${src}/conf" includes="**.config" />
+					<fileset dir="${src}/conf" includes="keysto*" />
+					<fileset dir="${src}/conf" includes="policy.all" />
+				</copy>
+	
+		<copy todir="${dist}/conf">
+			<fileset dir="${tests}/conf" includes="**.config" />
+
+		</copy>
+
+
+
+		<mkdir dir="${dist}/config" />
+		<copy todir="${dist}/config">
+			<fileset dir="${samples}/config" includes="**.config" />
+
+		</copy>
+
+		<copy todir="${dist}/conf">
+			<fileset dir="${src}/conf">
+				<include name="*.xsl" />
+			</fileset>
+		</copy>
+
+		<copy file="${src}/conf/startup.xml" todir="${dist}/conf" />
+		<copy file="${src}/conf/startupsecond.xml" todir="${dist}/conf" />
+		<copy file="${src}/conf/msgexportmgr.config" todir="${dist}/conf" />
+		<copy file="${src}/conf/exportmgr.config" todir="${dist}/conf" />
+		<copy file="${src}/conf/msgexportmgr.config" todir="${dist}/conf" />
+
+	</target>
+
+	<target depends="init" name="mkdistdirs">
+
+		<mkdir dir="${dist}" />
+		<mkdir dir="${bin}" />
+		<mkdir dir="${backup}" />
+		<mkdir dir="${conf}" />
+		<mkdir dir="${logs}" />
+	</target>
+
+	<target name="run-single">
+		<java classname="${run.class}" dir="${dist}" failonerror="true" fork="true">
+			<classpath refid="runtime.classpath" />
+
+
+		</java>
+	</target>
+
+	<target depends="distclean,init, compile, mkdirs, expandjars, jar,copyconfig" name="dist">
+
+
+		<pathconvert refid="project.classpath" property="cpath" targetos="windows" />
+		<pathconvert refid="project.classpath" property="unixpath" targetos="unix" />
+		<echo file="${dist}/runneon.bat">
+        
+        	${java.home}${file.separator}bin${file.separator}java -cp ${cpath};${lib}/neon-samples.jar;${lib}/neon-tests.jar -Djava.security.policy=conf/policy.all org.jini.projects.neon.service.ServiceStartup conf/neon.config
+        </echo>
+
+		<echo file="${dist}/runneon.sh">
+    	            ${java.home}${file.separator}bin${file.separator}java -cp ${unixpath}:lib/neon-samples.jar -Djava.security.policy=conf/policy.all org.jini.projects.neon.service.ServiceStartup conf/neon.config
+    	        </echo>
+
+		<mkdir dir="${dist}/support"/>
+		<mkdir dir="${dist}/support/META-INF"/>
+		
+		<copy file="${basedir}/support/build-macros.xml" todir="${dist}/support"/>
+		<copy file="${basedir}/support/emptyclassdep.xml" todir="${dist}/support"/>
+		<copy file="${basedir}/support/META-INF/PREFERRED.LIST" todir="${dist}/support/META-INF"/>
+			
+		<copy file="${src}/readme.txt" tofile="${dist}/README" />
+
+		<copy file="${src}/buildnotes.txt" tofile="${dist}/INSTALL" />
+
+		<copy file="${src}/changelog.txt" tofile="${dist}/CHANGELOG" />
+
+	</target>
+
+	<target name="fullclean" depends ="distclean">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" failonerror="false" />
+		<delete dir="${build.jvm14}" />
+		<delete dir="${dist}" />
+		<delete dir="${classes}" />
+	</target>
+	
+	<target name="distclean">
+		<delete dir="${build}" failonerror="false" />
+				<delete dir="${build.jvm14}" />
+		<delete dir="${classes}" />
+	</target>
+		
+	<target depends="dist" name="testdeployments">
+		<mkdir dir="${dist}/deploy1" />
+		<mkdir dir="${dist}/deploy2" />
+		<mkdir dir="${dist}/deploy3" />
+	</target>
+
+</project>

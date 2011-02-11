@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="seeding">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="agents" minOccurs="0"/>
+        <xs:element ref="slices" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="agents">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="agent" minOccurs="1" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="agent">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="classname" type="xs:string"/>
+        <xs:element name="configurl" type="xs:string"/>
+        <xs:element name="constraintsurl" type="xs:string"/>
+        <xs:element name="domain" type="xs:string"/>
+        <xs:element name="codebase" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="slices">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="slice"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="slice">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="subslices"/>
+        <xs:element ref="containedagents"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required"/>
+      <xs:attribute name="type" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="subslices">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="subslice"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="subslice">
+    <xs:complexType>
+      <xs:attribute name="id" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="containedagents">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="agentref"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="agentref">
+    <xs:complexType>
+      <xs:attribute name="id" use="required"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

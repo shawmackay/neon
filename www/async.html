@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Asynchronous Agents</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css" />
+<script language="javascript" type="text/javascript" src="neon.js"></script>
+</HEAD>
+<body>
+<div id="container"><script
+	src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script> <script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle"><img
+	src="images/neonemboss_small_green.jpg"></div>
+<div class="undertitle">
+<center>Asynchronous Agents and method calls</center>
+</div>
+<div class="paneldisplayLarge">
+<div class="innerLGPanel">
+<p>As discussed in other pages, Neon replaces the conventional
+object-reference/call-stack way of calling methods by intercepting the
+method, early on in the call-stack and using Messaging to dispatch the
+call to an appropriate endpoint, which then uses the message to invoke
+the actual method.<br />
+By default, Neon will cause the calling thread to block until a reply is
+available, effectively creating a request-reply messaging scenario and
+causing a synchronous call. However, because it utilises the flexibility
+of a messaging infrastructure, Neon can change this.</p>
+<h2>Options</h2>
+<h3>Use the Messaging API</h3>
+<p>The first option open to you is to go down to the messaging
+level, and interact with channels directly, calling
+createTemporaryChannel to get a reference to a reply channel, building
+your message and header, and calling sendMessage to the MessageBus</p>
+<p>This is even more complicated as of 0.2, because Channels are not automatically generated for every agent</p> 
+
+<h3>Create an Intercepted Asynchronous Agent</h3>
+<p>Intercepted asynchronous agents (asyncs), provide a low
+maintenance way to call <i>any</i> agent in an asynchronous fashion. An
+intercepted async is created through AgentContext.getAsyncAgent(String,
+AsyncHandler). The object returned will still implement all the
+interfaces and methods as a synchronous agent, but <b>all return
+values will be null</b>. This is where the intercepted comes into play. An
+intercepted async allows the method call to complete straight away
+returning null, when the method does complete, the AsyncHandler that you
+passed into the getAsynchronousAgent call, will be executed.</p>
+<h3>Create a Generated Asynchronous Agent</h3>
+<p>Generated asyncs are created by running your original synchronous
+agent through a utility called AsyncGen</p>
+<p>See the AsyncGen Javadoc documentation</p>
+<p><br />
+AsyncGen analyses all of the Collaborative interfaces of your agent and
+creates Asynchronous versions of them. so an Agent <strong>'BobImpl'</strong>
+implementing an interface <strong>'Bob'</strong> (which extends <em>Collaborative</em>)
+with a method <code>public String getGreeting(String name)</code> will
+create an interface <strong>'AsyncBob'</strong> with a method <code>public
+void getGreeting(String name, AsyncHandler contextHandler)</code>. Internally,
+the proxy will maintain the handler for each asynchronous call,
+dispatching to the handler as the reply is returned.</p>
+<h2>A Preferred Way</h2>
+<p>There isn't one really - it depends upon your situation.</p>
+<p>If you are comfortable with managing call contexts and building
+your own invocation messages, then interacting with Zenith is the most
+flexible way of doing asynchronous calls, and becoming familiar with the
+Zenith API's allows you to use some of the other messaging constructs,
+like recipient lists, and splitters.</p>
+<p>Intercepted asyncs are the least invasive in terms of coding
+changes and this can be done to use the same 'synchronous' API for any
+agent that is deployed to the system. However, there are two major
+drawbacks; firstly, all returns from the calls to the 'synchronous' API
+will always be null - the actual call result will be handed to your
+AsyncHandler when the agent has finished executing and the return type
+sent back to the caller, this could make your code harder to understand
+as the API that you are calling would seem to suggest return values.
+Secondly, you will always use the same handler that you used when you
+called AgentContext#getAsynchronousAgent(String, AsyncHandler), and thus
+will have to differentiate between any calls you make. If these caveats
+are acceptable to you then you can just get the 'asynchronous' version
+of any agent very simply</p>
+<p>Generated asynchronous versions of your agent collaborative
+interfaces, are a good way to do async calls and still have type safety.
+In order to use this, you will need to distribute the generated class as
+part of your library, but as noted above you won't have to implement it
+in your agent. Then when you call getAsyncAgent, Neon will make the
+representative proxy implement the asynchronous interface, and dispatch
+to the original agent interface, but will dispatch the return
+information to your AsyncHandler. Generated Asyncs is the only way to
+invoke methods on the same object but with different AsyncHandlers, yet
+still have Neon maintain your call contexts for you.</p>
+<h1>Task Agents</h1>
+<p>From 0.2 onwards, a new way of handling asynchronous requests, was written - TaskProcessors</p>
+<p>Task Processors are used in conjunction with Neon's dependency injection framework to allow you to easily create logic that receive tasks and provide feedback on them, or as a by-product another task, these are then handled by a Agent that does all the linking to the Neon internals for you.</p>
+<p><br/>
+  
+</p>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</body>
+</html>

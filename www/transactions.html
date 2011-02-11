@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Transactions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+<script language="javascript" type="text/javascript" src="neon.js">
+</script>
+</HEAD>
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div>
+
+<div class="undertitle">
+<center>
+  Transactions
+</center>
+</div>
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+<p>Neon supports the Jini transaction model, and in addition, allows any agent to react to transactional events (such as prepare,commit,etc.) with very little overhead to the developer. Transactions are an intrinsic part of Neon's component model, and as such, any agent can be operating under a transaction, even though they may not be reacting to it.</p>
+<p>Due to Neon's <em>satellite interception</em>, transactions, and propagating them from agent to agent, can be handled without the developer needing to write specific handling code. As in all things, there are exceptions to the rules, and these will also be outlined below.</p>
+<h2>Transactional Resources</h2>
+<p>In Neon, all agents (by default) are capable of running in the scope of a transaction - they are said to be a transactional resource - even if they do not do anything in response to changes in the transactions state. All calls from an agent to other agents will result in the propagation of the transaction to the called agent. In the event that an agent calls an agent that does react to transaction changes, this ensures that, globally, the transaction is consistent across all called agents, even if these agent happen to be on other hosts.</p>
+<h2>Jini transactions and Neon transactions</h2>
+<p>A Jini transaction is a fully distributed transaction and communicates with the transaction manager through your network, in order to reduce network traffic and lag through remote communications and latency, Neon attributes a local transaction ID to the distributed transaction - all agents in that host, will use the same local transaction ID and will join with the partition's TransactionBlackBox with this ID - the BlackBox needing to register with the Distributed TransactionManager only once. If an agent is called that is outside of the host, in another partition on the network, Neon transmits the Distributed Transaction object to the other host, which then tells its BlackBox to join the Transaction through the TransactionManager. The local transaction ID is not transmitted as it is not required. When the distributed transaction is commited, the blackBox is informed and then in turn, calls prepare and commit on all of its local participants, returning as necessary to the distributed transaction manager.</p>
+<h2>Using other transactional Jini services</h2>
+<p>By implementing TransactionalAccessor, an agent can be informed of the distributed transaction under which it is operating, this can then be passed on to other services such as Javaspaces, allowing both the Neon grid and other Jini services to participate in a single distributed transaction.</p>
+<div class="exampleHeader" onClick="toggleArea('example1');">Show/Hide JavaSpaceOps</div><div class="example" id="example1" style="visibility:hidden;display:none;">public class JavaSpaceOpsAgent extends AbstractAgent implements JavaSpaceOps, TransactionAccessor, LocalAgent {
+	
+	Transaction aTransaction;
+	
+	JavaSpace space;
+	
+	public JavaSpaceOpsAgent(){
+		this.namespace = "neon.transactions";
+		this.name = "JavaSpaceOps";
+	}
+	
+  ....	
+
+	public void setTransaction(Transaction  aTransaction){
+		this.aTransaction=aTransaction;
+	}
+	
+	
+	public Entry readIfExists(Entry  aEntry, long  along) throws ...{
+		return space.readIfExists(aEntry, aTransaction, along);
+	}
+<div class="exampleFooter">Example 1) JavaSpaceOpsAgent (Partial)</div></div>
+
+<p>By using TransactionAccessor, your agent will be given a reference to the Jini distributed transaction, as soon as the transaction scope changes. So looking at a client to this agent we get</p>
+<div class="exampleHeader" onClick="toggleArea('example2');">Show/Hide JavaSpaceOps Client snippet</div><div class="example" id="example2" style="visibility:hidden;display:none;">	public void run(){
+		try{
+			TransactionIntf txn = (TransactionIntf) context.getAgent("neon.Transaction");
+			txn.createTransaction();
+			JavaSpaceOps ops = (JavaSpaceOps) context.getAgent("JavaSpaceOps");
+			EmployeeEntry entr = new EmployeeEntry("Sea Captain", "G'arr");
+			ops.write(entr, 3*com.sun.jini.constants.TimeConstants.MINUTES);		
+			txn.commit();
+		}catch(Exception ex){
+			System.err.println("Caught Exception: "+ ex.getClass().getName() + "; Msg: " + ex.getMessage());
+			ex.printStackTrace();
+		}
+
+	}<div class="exampleFooter">Example 2) Using JavaSpaceOps from an agent</div></div>
+
+<p>As you can see we never have to pass the transaction to the JavaSpaceOps agent, because if our agent is in a transaction then the Javaspace will be in the same distributed transaction. </p>
+<h2>Reacting to Transactional Events</h2>
+<p>In order for an agent to react to transactional events, in this case, two-phase commit, an agent must implement <code>TransactionalAgent</code>.</p>
+<div class="exampleHeader" onClick="toggleArea('example3');">Show/Hide Example Transactional Agent</div><div class="example" id="example3" style="visibility:hidden;display:none;">package org.jini.projects.neon.host.transactions.tests;
+
+import org.jini.projects.neon.agents.AbstractAgent;
+import org.jini.projects.neon.agents.TransactionalAgent;
+
+import net.jini.space.JavaSpace;
+
+public class TransactionalAgentOne extends AbstractAgent implements TransactionalAgent, TxnMessageIntf {
+    public static final long serialVersionUID = 4941127014263569014L;
+    private String message;
+    private String previousMessage;
+	
+    public TransactionalAgentOne() {
+        super();
+        name = "T1";
+        this.namespace="transaction.tests";
+    }
+	
+    public boolean init() {
+        message="&lt;None>";
+        previousMessage = message;
+        return true;
+    }
+    
+    public boolean prepare() {
+        return true;
+    }
+
+    public boolean commit() {
+        System.out.println("TX1 has been Commited");
+        previousMessage = message;
+        return true;
+    }
+
+    public boolean abort() {
+        System.out.println("TX 1 has been Aborted");
+        message = previousMessage;
+        return true;
+    }
+    
+    public void setMessage(String message){
+        this.message = message;      
+    }   
+    public String getMessage(){
+        return this.message;
+    }
+
+}
+<div class="exampleFooter">Example 3) Example transactional agent</div></div>
+<p>As you can see, the Agent above has methods for prepare, commit, and abort. These methods are not callable by other agents, but are called by the infrastructure. If an agent cannot prepare/commit/abort it should return false, otherwise true.</p>
+<p>&nbsp; </p>
+<h2>Working under a transaction </h2>
+<p>In order to get your agent to use a transaction, it must be associated with one. To do this, you obtain an instance of TransactionAgent from your AgentContext</p>
+<div class="exampleHeader" onClick="toggleArea('example4');">Show/Hide Example Transaction Create/Commit</div><div class="example" id="example4" style="visibility:hidden;display:none;">TransactionIntf txnAgent = (TransactionIntf) context.getAgent("neon.Transaction");
+txnAgent.createTransaction();
+TxnMessageIntf tx1 = (TxnMessageIntf) context.getAgent("T1");
+TxnMessageIntf tx2 = (TxnMessageIntf) context.getAgent("T2");
+tx1.setMessage("This is some test data");
+System.out.println(tx1.getMessage());
+tx2.setMessage("....and some more test data");
+System.out.println(tx2.getMessage());
+txnAgent.commit();			
+<div class="exampleFooter">Example 4) Invoking agents under a transaction</div></div>
+<p>In the snippet above, you don't have to associate or even reference the transaction at all, the TransactionAgent binds the transaction reference into your agent after requesting a distributed transaction, then all agent calls made after that point are associated with that transaction, and all agents that are in a transaction are locked to all other agents. Importantly, any agents that they call are also running under that transaction scope. Once commit (or abort is called) the transaction completes, and the transaction scope is cleared down.</p>
+<h2>Opting out of transaction scope </h2>
+<p>As noted above, all agents that are called by an agent in a transaction are locked until the transaction completes, in some cases this may not be want you want to happen, and you may have some agents that you never wish to be locked under a transaction. AN example is the <em>TransactionAgent</em> itself - you never want agents that control transactions to be locked out by themselves being in a transaction. To opt out from running under a transaction scope, implement <em>NonTransactionalResource.</em></p>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</body>
+
+</html>

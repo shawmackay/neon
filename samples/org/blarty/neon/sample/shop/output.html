@@ -1,0 +1,58 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>Test Page for loading imported style sheet for Resource URL</title>
+   </head>
+   <link href="Shop.css" rel="stylesheet" type="text/css"><script type="text/javascript" src="shop.js"></script><body>
+      Hello
+      
+      There are: 2 different items
+      <script language="javascript" type="text/javascript">
+            var numitems = 2;
+        </script><form action="add" method="get" id="addForm"><input name="reference" id="reference"><input name="quantity" id="quantity"></form>
+      <form action="javascript:doAddSubmit();">
+         <table cellspacing="0" cellpadding="0">
+            <tr>
+               <th>Select?</th>
+               <th>Name</th>
+               <th>Price</th>
+               <th>Quantity<br>Available
+               </th>
+               <th style=" border-right: 1px solid silver;">Number</th>
+            </tr>
+            Num:1
+            <tr>
+               <td class="control"><input type="checkbox" id="select0"><input type="hidden" value="SGDGT" id="hidden0"></td>
+               <td>SuperGadget</td>
+               <td>9.99</td>
+               <td class="number">16</td>
+               <td class="control" style="border-right: 1px solid silver;"><input maxlength="2" size="2" id="quantity0"></td>
+            </tr>
+            Num:2
+            <tr>
+               <td class="control"><input type="checkbox" id="select1"><input type="hidden" value="WDGT1" id="hidden1"></td>
+               <td>Widget V1</td>
+               <td>1.99</td>
+               <td class="number">20</td>
+               <td class="control" style="border-right: 1px solid silver;"><input maxlength="2" size="2" id="quantity1"></td>
+            </tr>
+            false
+            
+            
+            
+         </table><span>
+            <div class="btn_l_clear"></div>
+            <div class="btn_c_clear">
+               <div style="margin-top:13px;"><img src="images/basket_add.png" alt="Button">&nbsp;
+                  <font size="+1"><a href="javascript:doAddSubmit();">Add Items</a></font></div>
+            </div>
+            <div class="btn_r_clear"></div></span><div class="floatClear"></div><span>
+            <div class="btn_l_clear"></div>
+            <div class="btn_c_clear">
+               <div style="margin-top:13px;"><img src="images/basket_delete.png" alt="Button">&nbsp;
+                  <font size="+1"><a href="">Remove Items</a></font></div>
+            </div>
+            <div class="btn_r_clear"></div></span><div class="floatClear"></div>
+      </form>
+   </body>
+</html>

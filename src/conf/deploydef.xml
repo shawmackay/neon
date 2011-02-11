@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<agentset codebase="http://localhost:8086/lib/neon-dl.jar">
+    <agent class="org.jini.projects.neon.neontests.tutorial.simple.HelloAgentImpl"/>
+    <agent class="org.jini.projects.neon.neontests.tutorial.simple.HelloAgentImpl"/>
+    <agent class="org.jini.projects.neon.neontests.tutorial.simple.HelloAgentImpl"/>
+</agentset>

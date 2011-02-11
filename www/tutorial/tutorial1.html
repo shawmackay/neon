@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Neon Tutorial</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../neon.css"/>
+<script type="text/javascript"  src="neon.js">
+</script>
+</HEAD>
+<body>
+<div id="container">
+  <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+  <script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+  <div class="smallimgblocktitle"> <img src="../images/neonemboss_small_green.jpg"> </div>
+  <div class="undertitle">
+    <center>
+      Your first Agent
+    </center>
+  </div>
+  <div class="paneldisplayLarge">
+    <div class="innerLGPanel">
+      <h2>Setting up</h2>
+      To create an agent for Neon, you will need some of Neon's libraries on your classpath. For the most part you'll only need the sail.jar (Standard Agent Interface Library). This contains the majority of the most widely used agent interfaces that you'll use, and will feature in most of the tutorials, any others that you require will be noted in the specific tutorial.<br/>
+      <br/>
+      <center>
+        <img src="images/example1.jpg"/><br/>
+        <font size="-1"><strong>Fig 1)</strong> Setting up your development in Eclipse</font>
+      </center>
+      <h2>Specifying the interface</h2>
+      <p>For this initial tutorial, we'll build an agent that returns some information about the host and domain the agent is running in.      </p>
+      <div class="example">package org.jvnet.neon.tutorial.example1;
+        
+        import org.jini.projects.neon.collaboration.Collaborative;
+        
+        public interface  ExampleAgent extends Collaborative{
+        public String getHostInformation();
+        }
+        <div class="exampleFooter">1) An example interface</div></div>
+        <p>&nbsp;</p>
+      <div class="example">package org.jvnet.neon.tutorial.example1;
+
+import java.rmi.RemoteException;
+
+import org.jini.projects.neon.agents.AbstractAgent;
+
+
+public class ExampleAgentImpl extends AbstractAgent implements ExampleAgent{
+    
+    public ExampleAgentImpl() {
+        System.out.println("Example Agent Created");
+        this.namespace = "neon.tutorial";
+        this.name="example1";
+    }
+    
+    @Override
+    public boolean init() {
+        // TODO Auto-generated method stub
+        System.out.println("Example Agent Initialised");
+        return true;
+    }
+    
+    @Override
+    public String getHostInformation() throws RemoteException{
+        // TODO Auto-generated method stub
+        return "Agent running @ " + context.getCurrentHost().getHostAddress() + " in domain " + context.getDomainName();
+    }
+
+}<div class="exampleFooter">2) The example implementation</div></div>
+      <h2>Building your agent</h2>
+      <p>In this instance you only really need to jar up the two class files, but as we'll see later on thing sget more complicated, so instead we'll use the 
+        apt builder for this.      </p>
+      <div class="example">&lt;project name="neontutorial" basedir="." default="dist">
+    &lt;property name="neon.home" value="../Neon/dist/neon" />
+    &lt;property name="jini.home" value="c:/Development/Java/apache-river-2.1.1" />
+    &lt;property name="dist" value="${build}/dist"/>
+            
+    &lt;import file="${neon.home}/support/build-macros.xml" />
+
+    &lt;target name="init">
+        &lt;mkdir dir="${dist}"/>
+        &lt;path id="project.classpath">
+            &lt;fileset dir="${jini.home}\lib">
+                &lt;include name="jini*.jar" />
+                &lt;include name="sun-util.jar" />
+                &lt;include name="jsk-platform.jar" />
+                &lt;include name="tools.jar" />
+            &lt;/fileset>
+            &lt;pathelement location="${neon.home}/lib/sail50.jar" />
+
+                        &lt;pathelement location="${neon.home}/lib/glyph.jar" />
+        &lt;/path>
+    &lt;/target>
+
+    &lt;target name="dist" depends="init">
+        &lt;delete dir="build"/>
+        &lt;property name="build" value="build"/>
+        &lt;mkdir dir="build" />
+        &lt;mkdir dir="build/classes" />
+        &lt;mkdir dir="build/lib" />
+        
+        
+        &lt;build-agent buildname="tutorialexample1" 
+            dest="build/classes" 
+            srcdir="src" 
+            project.classpath="project.classpath" 
+            script.classpath="project.classpath">
+            &lt;copy-includes>
+                &lt;fileset dir="src" id="id">
+                    &lt;include name="**/*.config" />
+                    &lt;include name="**/*.png" />
+                    &lt;include name="**/*.xsl" />
+                &lt;/fileset>
+            &lt;/copy-includes>
+        &lt;/build-agent>
+    &lt;/target>
+&lt;/project>
+<div class="exampleFooter">3) The build file</div></div>
+<p><strong>Note:</strong> The three properties shown above, <em>neon.home</em>, <em>jini.home</em> and <em>dist</em> are required for the build to work properly. Essentially, this will call a macrodef that is supplied as part of neon that runs your agent through Apt (which will generate a number of files, like Service bindings, exporter code, configuration files, etc, if you've attached specific annotations to your classes), creates a jar of the classes, and if it needs to runs your classes through <code>classdepandjar</code></p>
+<h2>Deploying your agent into a running instance</h2>
+<p>First of all, you must copy your agent to your codebase (httpd) server. This is because your agent is deployed into your service, with the appropriate codebase annotation (so it can be restarted, moved between services, etc). <em>If you choose not to do this, you must copy the jar to the neon instance's lib directory, manually amend the classpath that neon starts with (i.e. edit the startup scripts), change the startup.xml file and restart the service, you must also do this for every instance that the code may move to or be redeployed to on restart. ...So trust us - copy it to a webserver, it's easier and less maintenance.</em></p>
+<p>You then need to run the agent deployer - when you installed neon, and configured it, a number of scripts were created. Go to the directory where you installed neon. Run the agentdeploy script</p>
+<p><code>agentdeploy -agentclass org.jvnet.neon.tutorial.example1.ExampleAgentImpl -codebase http://localhost:8085/tutorialexample1.jar -group neonGroup -jar "..\workspace\NeonTutorial\tutorialexample1.jar"</code></p>
+<p>
+  Replace the argument after '-jar' with wherever you've built the tutorial to - the build script will tell you where it has been built to.
+  
+  You should see something similar to the following</p>
+<div class="internalpage">
+<pre>Starting agent deployment
+Finding agent class...
+Agent Class found .... creating
+Example Agent Created
+This is an agent class
+Agt class: org.jvnet.neon.tutorial.example1.ExampleAgentImpl
+Starting deployment process
+Waiting
+Discovered
+Found agent service
+Agent Deployer beginning deployment....
+Deploying full agent
+Deploying an agent in the Global domain
+Deployed Agent : org.jvnet.neon.tutorial.example1.ExampleAgentImpl
+Complete</pre></div>
+In the console that's running the Neon instance, you should see
+<div class="internalpage"><pre>Deploying an agent in to the Global domain
+Example Agent Initialised</pre></div>
+<p class="undertitle">Next Steps</p>
+<p>Although we've created and deployed an agent into the service, it doesn't do very much. In the next tutorial, we build an agent that interacts with this agent to display the host information </p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Rendering</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+<script type="text/javascript"  src="neon.js">
+</script>
+</HEAD>
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div>
+<div class="undertitle">
+<center>
+Web agents and Renderers</center>
+</div>
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+
+
+  <p>Neon allows agents to render the data out in some format, and register templates with certain agents to control how that data is rendered. The Neon distribution contains a web application that can be deployed into Tomcat, where that instance of Tomcat is started via Neon.</p>
+  <p>The web application creates a web context of /neonadmin. This page will display the current status of the instance, what partitions are currently running and the agents are contained in the partitions. </p>
+  <p>Agents that can present their data will have a 2nd button (<strong>'Show'</strong>) next to them on the neonadmin page</p>
+  <p>Presentation of agents is started by registering a template (the view) with render agents, and defining what engine type that template is applicable to. When a request is forwarded to a RenderAgent (controller) , it is passed an agentid, and a set of parameters, to be used when the rendering is performed.</p>
+  <p>The RenderAgent calls the agent specified by the ID (the model), and asks it to present it's data back to the RenderAgent, whereupon the RenderAgent, passes the registered template and the data from the model, to the Engine (also part of the view). There is currently an XSLT engine, that can generate markup languages, such as HTML, WML, etc. (depending upon your XSL stylesheet). Any instance of Neon, if it hosts a RenderAgent, will also, at a minimum, support the XSL engine.</p>
+  <p>It is possible to create engines that generate PDFs or Office Documents </p>
+  <p>We'll start by looking at how we create a presentable agent</p>
+  <p>Any agent within Neon that wishes to allow it's data to be rendered must implement <strong>org.jini.projects.neon.render.PresentableAgent</strong></p>
+<div class="example">import java.net.URL;
+import java.util.Map;
+import org.jini.projects.neon.collaboration.Collaborative;
+
+public interface PresentableAgent extends Collaborative {
+	public URL getTemplate(String type);
+	public String getPresentableFormat(String type, Map params);
+}
+<div class="exampleFooter">Listing 1) The PresentableAgent interface</div></div>
+<p>Once an agent has implemented this interface, it will have have the &quot;<strong>Show</strong>&quot; button in the neonadmin page. Pages requested from neonadmin will ask for either the &quot;xml&quot; type, so for this example, we'll consider the xml and html types to be the same.</p>
+<div class="example">package org.jini.projects.neon.web.sample;
+
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.jini.projects.neon.agents.AbstractAgent;
+import org.jini.projects.neon.agents.LocalAgent;
+import org.jini.projects.neon.host.NoSuchAgentException;
+import org.jini.projects.neon.render.PresentableAgent;
+import org.jini.projects.neon.render.RenderAgent;
+
+public class SimpleWebAgent extends AbstractAgent implements PresentableAgent, LocalAgent {
+
+	public SimpleWebAgent() {
+		this.namespace = "neon";
+		this.name = "SimpleWeb";
+	}
+
+	private static final long serialVersionUID = 3544671767701632819L;
+	Map map = new HashMap();
+
+	public boolean init() {
+		getAgentLogger().info("Loading SimpleWebAgent");
+			map.put("A", "one");
+			map.put("B", "two");
+			map.put("C", "threee");
+			return true;
+	}
+
+	public URL getTemplate(String type) {
+		if (type.equals("html")||type.equals("xml"))
+			return getStyleSheet();
+		return null;
+	}
+
+	
+	public String getPresentableFormat(String type, Map params) {
+			//Bad way of generating XML, but will do for example purposes
+
+			StringBuffer format = new StringBuffer();
+			format.append("&lt;doc>");
+			format.append("&lt;entries>");
+			for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+				Map.Entry entr = (Map.Entry) iter.next();
+				format.append(
+				    String.format("&lt;entry name=\"%s\" value=\"%s\"/>", 
+				    entr.getKey(), entr.getValue()));
+			}
+			format.append("&lt;/entries>");
+			format.append("&lt;parameters>");
+			for (Object o : params.entrySet()) {
+				Map.Entry entr = (Map.Entry) o;
+				String[] paramValues = (String[]) entr.getValue();
+				String displayValue = null;
+				if (paramValues.length == 1)
+					displayValue = paramValues[0];
+				else {
+					StringBuffer value = new StringBuffer();
+					for (String s : paramValues)
+						value.append("[" + s + "] ");
+					displayValue = value.toString().trim();
+				}
+				format.append(String.format(
+				    "&lt;parameter name=\"%s\" value=\"%s\"/>", 
+				     entr.getKey(), displayValue));
+			}
+			format.append("&lt;/parameters>");
+			format.append("&lt;/doc>");
+			return format.toString();
+	}
+
+	private java.net.URL getStyleSheet() {
+		return this.getClass().getResource("rendering.xsl");
+	}
+}<div class="exampleFooter">Listing 2) The SimpleWeb Agent</div></div>
+
+<h2>Viewing the result</h2>
+<p>So once your presentable agent has been deployed, you need to instruct Neon to render your particular agent. In order to do this, you need the either the Agernt Identity or it's FQ Name. </p>
+<p>If you have the neonadmin webapp installed on Tomcat, you can use the following URL:<br/>
+<code>http://yourhostname/neonadmin/agents/neon.SimpleWeb/index</code>
+<h3>Adding web actions</h3>
+<p>If you want to forward web actions onto the agent for processing prior to viewing a page, it is quite easy to do with Neon. First of all, create an interface that extends Collaborative (remember that the Collaborative interface is required so
+that other agents can call only certain methods on your agent. We'll call this interface <code>SimpleWeb</code></p>
+
+
+<div class="example">public interface SimpleWeb extends Collaborative{
+        @Render
+        public void update(Map options);
+}<div class="exampleFooter">Listing 3) The SimpleWeb Interface</div></div>
+
+<p>Note that the method is qualified with the<code>@Render</code> annotation (this does not have to happen in the implementation agent however), this is to further reduce what agent methods are accessible from the web server.
+All methods must take a Map as an argument - this represents the Parameter values passed to the web server from the browser.</p>
+<p>We now make our agent implement SimpleWeb; we'll make the update method simply add other key value pairs to the agents map.</p>
+ <div class="example">public void update(Map options) {
+        String[] names = (String[]) options.get("name");
+        String[] values = (String[]) options.get("value");              
+        for(int i=0;i&lt;names.length;i++){                      
+                map.put(names[i], values[i]);
+        }
+}<div class="exampleFooter">Listing 4) The implemented <code>update</code>method</div></div>
+<p> Like before you can access through the neon admin pages with the  URL: 
+<code>http://yourhostname/neonadmin/agents/neon.SimpleWeb/update</code>
+and you can add items using
+<code>http://yourhostname/neonadmin/agents/neon.SimpleWeb/update?name=d&value=foo</code></p>
+<h2> Easier creation of XML</h2>
+<p>Neon installs with <a href="http://jakarta.apache.org/commons/betwixt/">Jakarta Commons Betwixt</a> which makes it very easy to turn java objects into XML, without necessarily needing to have a schema and pre-generate mapping objects</p>
+<p>Using some simple POJOs that conform to the JavaBean specifications, we can easily create XML directly out of our business objects.<em>Note</em>, because Betwixt also depends on Commons Digester, it can also reverse the process and place the xml back into new Java objects.</p>
+ <p> Okay we'll start with a couple of simple POJO classes</p>
+ <div class="example">package org.jini.projects.neon.web.sample;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SimpleWebDocument {
+        
+        private List entries;
+        private List parameters;
+        
+        public SimpleWebDocument(){
+                entries = new ArrayList();
+                parameters = new ArrayList();
+        }
+        
+        public List getEntries(){
+                return entries;
+        }
+        
+        public List getParameters(){
+                return parameters;
+                
+        }
+        
+        public void addEntry(String name, String value){
+                entries.add(new DataEntry(name, value));
+        }
+        
+        public void addParameter(String name, String value){
+                parameters.add(new DataEntry(name, value));
+        }
+        
+        public void addParameter(String name, String[] value){
+                parameters.add(new DataEntry(name, value));
+        }
+}<div class="exampleFooter">Listing 5) The 'root' object for our XML</div></div> <br/><br/>
+<div class="example">package org.jini.projects.neon.web.sample;
+
+public class DataEntry {
+
+        private String name;
+
+        private String value;
+
+        public DataEntry(String name, String value) {
+                setValue(value);
+                setName(name);
+        }
+
+        public DataEntry(String name, String[] value) {
+                setValue(value);
+                setName(name);
+        }
+
+        public String getName() {
+                return name;
+        }
+
+        public void setName(String name) {
+                this.name = name;
+        }
+
+        public String getValue() {
+                return value;
+        }
+
+        public void setValue(String value) {
+                this.value = value;
+        }
+
+        public void setValue(String[] values) {
+                StringBuffer valueBuffer = new StringBuffer();
+                for (String s : values)
+                        valueBuffer.append("[" + s + "] ");
+                value = valueBuffer.toString().trim();
+        }
+
+}<div class="exampleFooter">Listing 6) The holder object for our entries and parameters</div></div> 
+<br/><p>We then change our getPresentableFormat method to:</p>
+<div class="example">   public String getPresentableFormat(String type, Map params) {
+
+                SimpleWebDocument doc = new SimpleWebDocument();
+                for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+                        Map.Entry entr = (Map.Entry) iter.next();
+                        doc.addEntry((String) entr.getKey(), (String) entr.getValue());
+                }
+                for (Object o : params.entrySet()) {
+                        Map.Entry entr = (Map.Entry) o;
+                        if (entr.getValue() instanceof String)
+                                doc.addParameter((String) entr.getKey(), (String) entr.getValue());
+                        else
+                                doc.addParameter((String) entr.getKey(), (String[]) entr.getValue());
+                }
+                
+                try {
+                        String ret =  <b>WebUtils.convertToXML("doc", doc);</b>
+                        System.out.println(ret);
+                        return ret;
+                } catch (BadFormatException e) {
+                        // TODO Auto-generated catch block
+                       e.printStackTrace();
+                }
+                return null;
+        }<div class="exampleFooter">Listing 7) The new getPresentableFormat method </div></div> 
+        
+        <p>When this is run through Betwixt, we will get XML back similar to the following</p>
+<div class="example">        &lt;doc&gt;
+                &lt;entries&gt;
+                        &lt;dataEntry&gt;
+                                &lt;name&gt;A&lt;/name&gt;
+                                &lt;value&gt;one&lt;/value&gt;
+                        &lt;/dataEntry&gt;
+                        &lt;dataEntry&gt;
+                                &lt;name&gt;C&lt;/name&gt;
+                                &lt;value&gt;threee&lt;/value&gt;
+                        &lt;/dataEntry&gt;
+                        &lt;dataEntry&gt;
+                                &lt;name&gt;B&lt;/name&gt;
+                                &lt;value&gt;two&lt;/value&gt;
+                        &lt;/dataEntry&gt;
+                &lt;/entries&gt;
+                &lt;parameters/&gt;
+        &lt;/doc&gt;
+        <div class="exampleFooter">Listing 8) The new xml output</div></div> 
+ <p>We can then override the format for DataEntry to put the name and value elements as attributes, and change the name from dataEntry to entry. We do this by creating a DataEntry.betwixt file:</p>       
+        <div class="example">&lt;?xml version='1.0' encoding='UTF-8' ?&gt;
+                &lt;info primitiveTypes=&quot;attribute&quot;&gt;
+                        &lt;element name=&apos;entry&apos;&gt;
+                                &lt;addDefaults/&gt;
+                        &lt;/element&gt;
+                &lt;/info&gt;<div class="exampleFooter">Listing 9) The DataEntry.betwixt override file</div></div> 
+  <p>This will then give us this XML:</p>
+        <div class="example">&lt;doc&gt;
+                &lt;entries&gt;
+                        &lt;entry name=&quot;A&quot; value=&quot;one&quot;/&gt;
+                        &lt;entry name=&quot;C&quot; value=&quot;threee&quot;/&gt;
+                        &lt;entry name=&quot;B&quot; value=&quot;two&quot;/&gt;
+                &lt;/entries&gt;
+                &lt;parameters/&gt;
+                &lt;/doc&gt; <div class="exampleFooter">Listing 10) The final XML output</div></div>   
+  <p>Then you can create the xsl file accordingly</p>
+  <p>&nbsp;</p>
+  <h2>Actions</h2>
+  <p>The @Render interface also allows for prepopulation of classes, through the populate attribute</p>
+  <div class="example">
+  public interface UserChange extends Collaborative	{
+	.....
+	@Render(action="updateAddress",populate={Address.class})
+	public void updateDeliveryAddress(Address newAddress);
+}<div class="exampleFooter">Listing 11) A prepopulating action</div></div>
+<p>In the example shown above, Neon will create a class of <i>Address</i> and then attempt to match items in the parameters in the request with methods on the Address class. Once this is done, it passes that to the <em>updateDeliveryAddress</em> method.</p>
+<p>There are two other attributes on the @Render annotation: cacheable and contentType. These are required when you want to send data back to the browser other than HTML. By default, the RenderAgent returns a RenderResponse object with a content type of text/html, by using the RenderAction you can override this. This is good for dynamically created images (charts, etc) and PDF content, as well as a host of other examples. It's also needed for AJAX.</p>
+<h2>AJAX</h2>
+<p>AJAX support in Neon, is very raw. Technically, Neon does very little to help you with Ajax - there's no JSON libraries, no javascript library, etc. This is because you are free to handle that with whichever toolkit you wish to use and is the best fit for your project. What Neon does do is make the server-side portion of AJAX very easy. Let's go through an example, which allows the user to click on an item on a webpage and for Ajax to display a table with information about that item.</p>
+<div class="example">package org.jini.projects.neon.sample.ajax;
+
+import org.jini.projects.neon.annotations.Render;
+import org.jini.projects.neon.collaboration.Collaborative;
+import org.jini.projects.neon.sample.shop.SimpleDetailsForm;
+
+public interface AjaxSample extends Collaborative{
+	@Render(action="index")
+	public void renderMain();
+	
+	@Render(action="display", populate={DisplayRequest.class},cacheable=false, contentType="text/xml")
+    public void displayDetails(DisplayRequest item);
+}<div class="exampleFooter">Listing 12) An AJAX capable rendering agent</div></div>
+<p>Note the cacheable and contentType attributes. We also prepopulate a DisplayRequest object (it populates an ID variable)</p>
+<p>For this example, although we implement the displayDetails method, it doesn't really do much - it's more needed for the AJAX munging. We also need 2 XSL files, 1 for the index page, and another for generating the table HTML (although this could generate any XML and then be processed in the client)</p>
+ <div class="example">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    version="2.0">
+    &lt;xsl:template match="/">
+        &lt;html>
+            &lt;head>
+                &lt;title>Item Emporium&lt;/title>
+            &lt;/head>
+            &lt;script language="JavaScript" type="text/javascript">
+            function display(id){             
+                   var url = "display?id=" + id;
+                   if (typeof XMLHttpRequest != "undefined") {
+                       req = new XMLHttpRequest();
+                   } else if (window.ActiveXObject) {
+                       req = new ActiveXObject("Microsoft.XMLHTTP");
+                   }
+                   req.open("GET", url, true);
+                   req.onreadystatechange = callback;
+                   req.send(null);
+            }
+            
+            function callback() {
+                if (req.readyState == 4) {
+                    if (req.status == 200) {
+                        var idField = document.getElementById("itemarea");
+                        var message = req.responseXML;
+                        idField.innerHTML = message;
+                        }
+                }
+            }
+            &lt;/script>
+            &lt;body>
+                &lt;h1>Please select an item to show information&lt;/h1>
+                &lt;xsl:apply-templates />
+                &lt;span id="itemarea" >&lt;/span>
+            &lt;/body>
+        &lt;/html>
+    &lt;/xsl:template>
+    
+    &lt;xsl:template match="items">
+        &lt;table border="1px solid navy" cellspacing="0" cellpadding="0">
+            &lt;tr>
+                &lt;th>Item&lt;/th>
+            &lt;/tr>
+            &lt;xsl:apply-templates />
+        &lt;/table>
+    &lt;/xsl:template>
+    &lt;xsl:template match="displayableItem">
+        &lt;tr>
+            &lt;td>
+                &lt;button>
+                    &lt;xsl:attribute name="onclick">javascript:display('&lt;xsl:value-of
+                        select="./identifier" />');&lt;/xsl:attribute>
+                    &lt;xsl:value-of select="./name" />
+                &lt;/button>
+            &lt;/td>
+        &lt;/tr>
+    &lt;/xsl:template>
+&lt;/xsl:stylesheet><div class="exampleFooter">Listing 13) An XSL stylesheet creating a webpage with AJAX calls</div></div>
+<p>&nbsp;</p>
+<div class="example">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    version="2.0">
+    &lt;xsl:template match="/">
+        &lt;xsl:apply-templates />
+    &lt;/xsl:template>
+    &lt;xsl:template match="item">
+        &lt;table>
+            &lt;tr>
+                &lt;td>Name&lt;/td>
+                &lt;td>
+                    &lt;xsl:value-of select="./name" />
+                &lt;/td>
+            &lt;/tr>
+            &lt;tr>
+                &lt;td>Desc&lt;/td>
+                &lt;td>
+                    &lt;xsl:value-of select="./description" />
+                &lt;/td>
+            &lt;/tr>
+            &lt;tr>
+                &lt;td>Available&lt;/td>
+                &lt;td>
+                    &lt;xsl:value-of select="./quantityavailable" />
+                &lt;/td>
+            &lt;/tr>
+            &lt;tr>
+                &lt;td>Price&lt;/td>
+                &lt;td>
+                    &lt;xsl:value-of select="./unitprice" />
+                &lt;/td>
+            &lt;/tr>
+        &lt;/table>
+    &lt;/xsl:template>
+&lt;/xsl:stylesheet>
+<div class="exampleFooter">Listing 14) An XSL stylesheet creating a HTML snippet for AJAX</div></div>
+<p>&nbsp;</p>
+<div class="example">public EngineInstruction getPresentableFormat(String type, String action, Map params, boolean getTemplate)
+            throws RemoteException {
+        try {
+            if(action.equals("index"))
+                return new EngineInstruction("xsl",getClass().getResource("index.xsl"), WebUtils.convertObjectToXML("items", items));
+            if(action.equals("display")){
+                String id = ((String[]) params.get("id"))[0];
+                System.out.println("Looking for item: " + id);
+                for(DisplayableItem d: items){
+                    if(d.getIdentifier().equals(id))
+                        return new EngineInstruction("xsl",getClass().getResource("display.xsl"), WebUtils.convertObjectToXML("item",d));
+                }            
+            }
+        } catch (BadFormatException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }<div class="exampleFooter">Listing 15) The method to handle the two actions</div></div>
+<p>&nbsp;</p>
+<p><em>Note</em> This will be made easier when action methods are allowed to return EngineInstructions directly, therefore we won't need to extract the ID parameter directly, we can use the prepopulation of the @Render annotation.
+<h2>Conclusions</h2>
+        <p>Although a rather contrived example, the above shows you how to use Betwixt and @Render methods to create an agent that is callable from a Web Browser and present the data through XSL via Commons betwixt. <br/>
+        In a future release, Neon will support rendering chains and RenderResponse objects - when this happens the above examples will be changed to support these.</p>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</body>
+</html>

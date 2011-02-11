@@ -1,0 +1,58 @@
+grant codebase "file:/usr/local/java/jini2_0/lib/jsk-platform.jar" {
+    permission java.security.AllPermission;
+    permission java.lang.RuntimePermission "*";
+
+};
+
+grant codebase "file:/usr/local/java/jini2_0/lib/jini-core.jar" {
+    permission java.security.AllPermission;
+};
+
+grant codebase "file:/usr/local/java/jini2_0/lib/jini-ext.jar" {
+    permission java.security.AllPermission;
+    permission java.lang.RuntimePermission "*";
+};
+
+grant codebase "file:/usr/local/java/jini2_0/lib/sun-util.jar" {
+    permission java.security.AllPermission;
+};
+
+grant codebase "http://e0052sts3s/jinistubs/neon-dl.jar" {
+    permission java.security.AllPermission;
+};
+
+grant codebase "file:lokiLM.jar" {
+    permission java.security.AllPermission;
+};
+
+grant codebase "file:Silo.jar" {
+    permission java.net.SocketPermission "*", "accept, connect, listen,resolve";
+    permission java.lang.RuntimePermission "*";
+	permission java.io.FilePermission "${user.dir}/-", "read";
+    permission net.jini.discovery.DiscoveryPermission "uk.co.cwa.jini2";
+    permission org.jini.projects.neon.host.PrivilegedAgentPermission "listCallbacks";
+    permission javax.security.auth.AuthPermission "createLoginContext.Loki";
+	permission javax.security.auth.AuthPermission "doAs";
+	permission javax.security.auth.AuthPermission "doAsPrivileged";
+	permission javax.security.auth.PrivateCredentialPermission "javax.security.auth.x500.X500PrivateCredential javax.security.auth.x500.X500Principal \"*\"","read";
+};
+
+
+//Remove this for distribution
+grant codebase "file:${user.dir}" {
+    permission java.net.SocketPermission "*", "accept, connect, listen,resolve";
+    permission java.lang.RuntimePermission "*";
+	permission java.io.FilePermission "${user.dir}/-", "read";
+    permission net.jini.discovery.DiscoveryPermission "uk.co.cwa.jini2";
+    //The system agents may need to be moved into a separate JAR
+    permission org.jini.projects.neon.host.PrivilegedAgentPermission "listCallbacks";
+    permission javax.security.auth.AuthPermission "createLoginContext.Loki";
+	permission javax.security.auth.AuthPermission "doAs";
+	permission javax.security.auth.AuthPermission "doAsPrivileged";
+	permission javax.security.auth.PrivateCredentialPermission "javax.security.auth.x500.X500PrivateCredential javax.security.auth.x500.X500Principal \"*\"","read";
+};
+
+grant {
+	permission java.security.AllPermission; 
+};
+

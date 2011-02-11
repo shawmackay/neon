@@ -1,0 +1,28 @@
+<agents:agentRequirements
+    xmlns:agents="http://neon.jini.org/agents">
+    <privileges>
+
+    </privileges>
+    <restrictions>
+        <code>
+            <classname name="athena.service.AthenaService" visibility="requisite"/>
+        </code>
+        <system>
+            <status>available</status>
+            <cpu number="1"/>
+            <memory pcfree="20%" minM="4"/>
+            <jvmversion>1.4.2</jvmversion>
+            <endian>little</endian>
+            <os>
+                <family>Any</family>
+                <version></version>
+                <arch>Any</arch>
+            </os>
+
+        </system>
+        <instances>
+            <agentavail name="Services" min="1"/>
+        </instances>
+        
+    </restrictions>
+</agents:agentRequirements>

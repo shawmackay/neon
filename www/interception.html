@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Interception</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</HEAD>
+<body bgcolor="#444444">
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div>
+<div class="undertitle">
+<center>
+  Interception and proxies
+</center>
+</div>
+<div>
+
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+
+<p>Neon makes great use of dynamic proxies in order to add system level functionality around an agent, and to enable collaboration between agents</p>
+<p>By using dynamic proxies, Neon can intercept calls and send them to objects that are attached to your agent to handle infrastructure and management level tasks. This is called <em>satellite interception. </em> Objects are placed into the dynamic proxy when the agent is deployed, and although most methods will be routed to the agent that you have written, some methods will be intercepted and diverted to these satellite objects, which can then, if required, call methods on your agent.</p>
+<p><img src="images/NeonIntercepts.png" width="525" height="280"> </p>
+<h2>Building a delegate
+</h2>
+<p>Delegates are formed from two pieces, the delegate, the invoker</p>
+<p>The delegate is an interface that is registered inside the FacadeProxy, the invoker implements the delegate interface and has it's <code>invokeDelegate</code> method called. These two pieces are used in the proxy that the receiving agent is wrapped in. Delegates are generally called through the messaging API, rather than the agent interfaces unless the delegate matches the method being called, or your agent implements the delegate.</p>
+<p>When the initial FacadeProxy is registered it will implement all the interfaces of your agent and the delegate interfaces, for all methods that are sent to the Proxy, any calls to methods that are registered in a delegate will result in redirecting the method call to the Invoker.</p>
+<p>For the most part, it is better to think of delegates as ways of adding object behaviours into the agent that the infrastructure requires, rather than behaviours that other agents need to call. </p>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+
+<html>
+<head>
+<title>:: Neon :: Meta</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+<script language="javascript" type="text/javascript" src="neon.js"></script>
+</HEAD>
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_red.jpg">
+</div><div class="undertitle">
+<center>
+  Meta Information
+</center>
+</div>
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+
+<p>All agents are capable of carrying meta information or attributes, and as is usual with Jini based applications, these attributes are stored as Entries. Meta information is used as a way of applying a filter to AgentContext#getAgent and is modifiable at runtime, unlike an agents name and namespace. Importantly, meta information can be created outside of Neon, in Configuration Files and automatically set when the agent is deployed.</p>
+<p>
+Similarly, as agents can be differentiated using meta information, so can Agent services and Domains. In the case of the Agent Service, meta information can be appended as Lookup attributes as happens with most Jini services, but can also be used in a similar context to how it is used with domains.</p>
+<p>With domains, meta information is used when evaluating constraints when (re-)deploying agents into the partition.</p>
+<h2>Dynamic Meta-Information</h2>
+<p>If we take entries as they are used in Lookup Attributes, generally a service will send a set of attributes to be stored by the LUS, as service meta-data (i.e. data about the service; a Name, a location, etc.). In many cases, this data is fairly static, although this does not have to be so, but because the attributes are 'posted' to the LUS, meta-data that changes frequently is often not a good choice for a lookup attribute. Within Neon, meta-information for domains and agents are held on the same system as they are evaluated on - this allows for evaluation of entries based on the most up-to-date values.</p>
+
+<p>Defining Meta Information</p>
+<p>Meta information is done by returning an array of Entries from getMetaInformation. Because of this, an agent has the ability to change it's own meta information at anytime, which then affects subsequent lookups for the agent. Agent State, to some degree, is meta-information, but because it is used in a number of areas, it has it's own methods and objects we'll discuss that further on.</p>
+<p>Meta data can be comprised of any number of entries, including any object that extends Meta - Meta in turn extends AbstractEntry. Any object that implements Meta will have it's <code>evaluate()</code> method called, otherwise normal entry matching occurs. The evaluate method, allows for finer consideration of entry data, above that supported by equals. Entries are dependent upon a template either specifying 'exact match' or 'don't care' semantics . This is extremely useful in Lookup Services, where the values can be compared exactly, and where deciding an item is </p>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</body>
+
+</html>

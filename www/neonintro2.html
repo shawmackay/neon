@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>:: Neon ::Building your first agent</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.2  (Linux)">
+	<META NAME="CREATED" CONTENT="20050310;16001300">
+	<META NAME="CHANGED" CONTENT="20050310;16001400">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+<script language="javascript" type="text/javascript" src="neon.js">
+</script>	
+
+</HEAD>
+<body>
+<div id=container>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div><div class="undertitle">
+
+<center>Building your first agent</center>
+
+</div>
+
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+
+<P>In order to deploy a component into Neon, you must first create
+and build a class that can be recognised by Neon. This class is
+called an <i>Agent</i></P>
+<P>Your agent may be the object you wish to deploy or a holder that
+contains it, but in any case, in order to load functionality into
+Neon, it must meet certain requirements.</P>
+<P>All methods that you need to implement are in the
+<I>org.jini.projects.neon.agents.Agent</I> class, and in this
+interface are a number of methods, many of which are to deal with
+life cycle, recognition and binding of the agent into the partition.</P>
+
+<P>Most agents, however, will be able to extend
+<I>org.jini.projects.neon.agents.AbstractAgent</I><SPAN STYLE="font-style: normal">
+and will only have to implement a few methods to be compliant with
+the Neon contract. AbstractAgent contains fields and method
+implementations that deal with most of the life cycle code and the
+binding of the agent to the environment.</SPAN></P>
+<P STYLE="font-style: normal">If you choose to extend AbstractAgent,
+you will need to implement two methods. The most important of the
+methods, that you will have to implement is the <I>init() </I>method.</P>
+
+<H2 CLASS="western">The init() method</H2>
+<P>init() is called every time an agent is deployed to a host, in
+order to set up any required objects of the agent ( these objects may
+be stored in transient fields, or maybe registering listeners on
+other agents). This called when the agent if first deployed, when the
+agent arrives on a new host as result of a request to <I>TransferAgent</I><SPAN STYLE="font-style: normal">
+or when an agent is recovered from a Javaspace after system shutdown.
+</SPAN>
+</P>
+
+<H2 CLASS="western">The run() method</H2>
+<P>If you implement <code>java.lang.Runnable</code>, the run() method is called directly after init within the same
+thread, and allow the agent to start any direct internal processing.</P>
+<h1>Other Lifecycle Methods</h1>
+<P>In addition you may want to override the other two main lifecycle methods and add your own name/namespace combination </P>
+<H2 CLASS="western">The stop() method</H2>
+<P>Stop is called whenever the agent needs to pause processing, this
+may be due to a transfer request or a Ctrl-C shutdown or Jini remote
+termination request. The purpose of the stop() method is to ensure
+that any resources that are under the control of the agent are
+released.</P>
+<H2 CLASS="western">The complete() method</H2>
+<P>Although strictly not required to be implemented, because it is
+implemented within AbstractAgent, the complete method is called as a
+result of the agent requiring to terminate. In most cases, agents
+will be <I>temporally continuous, </I><SPAN STYLE="font-style: normal">
+that is that they should always exist regardless of where they are
+and system failure. However, in practice, many agents will deploy and
+then once their function is complete be removed from the system,
+therefore complete is the last internal method that will be called in
+regard to user-defined processing (assuming you use </SPAN><I>AbstractAgent</I><SPAN STYLE="font-style: normal">,
+of course). a call to complete() <U>always</U><SPAN STYLE="text-decoration: none">
+follows a call to stop()</SPAN></SPAN></P>
+<P STYLE="margin-top: 0.21cm"><IMG SRC="neonlifecycle.png" NAME="Graphic3" ALIGN=LEFT BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Fig
+3) Flowchart of agent lifecycle</I></FONT></P>
+<div class="exampleHeader" onClick="toggleArea('example2');">Show/Hide Simple agent example</div><div class="example" id="example2" style="visibility:hidden;display:none;"><pre><font face="Arial, Helvetica, sans-serif;" size="2">package org.jini.projects.neon.neontests.tutorial.simple;
+
+import java.util.Date;
+import java.util.logging.Logger;
+
+import org.jini.projects.neon.agents.AbstractAgent;
+
+public class SimpleAgent extends AbstractAgent {
+	private transient Logger agLog; 
+	
+	public SimpleAgent() {
+		super();		
+	}
+	public boolean init() {
+		agLog = getAgentLogger();
+		agLog.info("Initialising agent @ " + new Date() + " on " + context.getCurrentHost());
+		return true;
+	}
+
+	public void start() {
+		agLog.info("Agent started");
+	}
+
+	public void stop() {	
+		agLog.info("Stopping agent");
+		super.stop();
+	}
+	
+	public void complete() {	
+		agLog.info("Agent processing completed");
+		super.complete();		
+	}
+}</font></pre>
+
+<FONT SIZE=2><I>Example 1)Simple agent with lifecycle</I></FONT></P>
+</div>
+<P STYLE="font-style: normal; text-decoration: none"><BR><BR>
+<h1>Building a Collaborative Agent</h1>
+In order to allow you agents to accept calls from other agents, you must make your agent implement an interface, and, in turn, this interface must extend org.jini.projects.neon.collaboration.Collaborative;.  No methods need implementing, but the Collaborative interface marks out which interfaces Neon should allow of other agents to call, and stop other agents calling methods that you don't want to expose externally.<br><br>
+
+So lets take an example agent, and one that you'll become familiar with fairly quickly - the Services Agent<br>
+
+The services agent, allows developers to easily obtain a reference to a Jini service, without having to do Discovery and Lookup for themselves, in addition, each Service Agent is backed by it's own LookupCache.
+<div class="example">package org.jini.projects.neon.service;
+
+import java.util.List;
+
+import org.jini.projects.neon.agents.sensors.SensorListener;
+import org.jini.projects.neon.collaboration.Collaborative;
+
+public interface ServiceAgentIntf extends Collaborative{
+	public abstract List getAgentHosts();
+	public abstract List getNamedService(String name, Class serviceClass);
+	public abstract List getService(Class serviceClass);
+	public abstract Object getSingleService(Class serviceClass);		
+	public abstract boolean addListener(SensorListener listener);
+}
+<div class="exampleFooter">Example 2)The ServiceAgent Collaborative Interface</div></div> 
+
+<h2>Using a Collaborative Agent</h2>
+In order to use the facilities provided by an agent, you have to obtain a reference<sup>[1]</sup> to it, from the Agent Registry.<br/>
+Every agent has access to it's host through it's AgentContext, in agent parlance this is called the agent's <i>Environment</i>. The Context is accessed through <b>getAgentContext()</b>, or if your agent extends <b><i>AbstractAgent</i></b>, simply through accessing the context field. One of the methods on AgentContext is <b>getAgent()</b>. The getAgent method takes a string as a name, which will look to obtain a reference to an agent with the group of the same name/namespace combination.<br/>
+<center>
+<img src="neongetagent.png" border="0" /></center><br />
+<FONT SIZE=2><I>Fig
+4) The Agent Registry</I></FONT>
+<h3>Names and namespaces</h3>
+<p>Ideally, within you should create a no-args constructor, that sets the name and namespace fields (if using <strong><em>AbstractAgent</em></strong>), or override <strong>getName()</strong> and <strong>getNamespace()</strong>.<br />
+  The name refers to the name in the local namespace that the agent is known as, so if you are in the 'neon' namespace you can get a services agent using <b>context.getAgent("Services")</b>, if, however, your agent is in a different namespace, you should get a reference to the services agent using the fully qualified reference (<i>&lt;namespace>.&lt;name></i>) so you would call <b>context.getAgent("neon.Services")</b>. Every fully-qualified reference can represent one or more agents. getAgent() will return a singular agent reference, i.e. it will get an agent that has a unique ID of, say, <i>ab67-53644567-0c4e-7826d723</i>, that you will communicate with, if you are interfacing with Neon through it's weblink, you will use <strong>getStatelessAgent()</strong> that will return you a reference to the dispatcher for <i>"neon.Services"</i>.<br/> 
+As in most systems that use namespaces, namespaces in Neon provide a degree of insulation from naming conflicts. </p>
+<p>If, for whatever reason, you choose not to set <em>name</em> and <em>namespace</em> then Neon will use the class' package as the namespace, and if your agent's classname ends with 'Agent' will use the suffix to create the Agent name. For example, org.jini.projects.neon.sample.TestCallsAgent will have the namespace of <em>org.jini.projects.neon.sample</em> and the name of <em>TestCalls</em>.<br/>
+  <img src="neonbusinvoke.png" width="570" height="336" border="0" /><br />
+  <FONT SIZE=2><I>Fig
+  4) Invoking methods through Zenith</I></FONT>
+</p>
+<h3>Complex routing</h3>
+As I mentioned, Neon automatically creates zenith message channels as agents are deployed to it, and removes them when the agent moves, completes or is killed. The basic pattern is to use a <i>Dynamic Router</i> to maintain the list of agents in that fq namespace. However, there may be instances where this is not exactly what you want, and you wish to implement your own message functionality. At the lowest level, you can implement your own Message endpoint or router, and there are a number of these with in the Zenith source, that allow you to bind a router to the end of a channel and manipulate messages as you get them. In addition, some of these have control channels allowing additional routing, filter and rule information to be added at runtime.<br/>In the future, it is the intent, to add Channel Templates, where a template for the set of channels and endpoints used for processing can be created and managed by Zenith when an entity is deployed into Neon, in much the same way that the default messaging routing is provided now.
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</BODY>
+</HTML>

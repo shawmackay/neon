@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <nav>
+        <navpoint ref="add?reference=Item1&amp;quantity=5" name="Add"/>
+        <navpoint ref="delete" name="Delete"/>
+        <navpoint ref="aqbcde" name="nice"/>
+        <navpoint ref="aqbcde" name="day"/>
+    </nav>
+</root>

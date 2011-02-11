@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seeding>
+	<agents>
+		<agent classname="org.jini.projects.neon.service.ServiceAgentImpl" configurl="file:conf/serviceAgent.config"  domain="global"    atserver="true"/>
+		<agent classname="org.jini.projects.neon.service.ServiceAgentImpl" configurl="file:conf/serviceAgent.config"  domain="testDomain"    atserver="true"/>	
+	</agents>
+	<slices>
+		<slice id="" type="">
+			<subslices>
+				<subslice id=""></subslice>
+			</subslices>
+			<containedagents>
+				<agentref id=""></agentref>
+			</containedagents>
+		</slice>
+	</slices>
+</seeding>

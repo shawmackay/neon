@@ -1,0 +1,325 @@
+body {
+    font-family:arial, helvetica, sans-serif;
+}
+
+
+
+th {
+    background-color:#DDEEFF;
+    font-size:12px;
+    border-left: 1px solid silver;
+    border-top: 1px solid silver;
+    border-bottom: 1px solid silver;
+    padding-left:12px;
+    padding-right: 12px;
+}
+
+td {
+    padding-left:12px;
+    padding-right:12px;
+    border-left: 1px solid silver;
+    }
+
+td.endcolumn {
+     border-left: 1px solid silver;
+    border-right: 1px solid silver;
+}
+
+td.number {
+    text-align:center;
+        }
+
+table {
+    border: 1px solid gray;
+}
+
+td.control {
+    text-align:center;
+        }
+
+
+
+.btn_c_green a:link {
+	text-decoration:none;
+	font-weight: bold;
+	color:black;
+}
+.btn_c_green a:visited {
+	text-decoration:none;
+	font-weight: bold;
+	color:black;
+}
+
+.btn_c_green a:hover {
+	text-decoration:none;
+	font-weight: bold;
+	color:white;
+}
+
+
+.btn_c_clear a:link {
+	text-decoration:none;
+	font-weight: bold;
+	color:black;
+}
+.btn_c_clear a:visited {
+	text-decoration:none;
+	font-weight: bold;
+	color:black;
+}
+
+.btn_c_clear a:hover {
+	text-decoration:none;
+	font-weight: bold;
+	color:white;
+}
+
+.btn_c_aqua a:link {
+	text-decoration:none;
+	font-weight: bold;
+	color:black;
+}
+.btn_c_aqua a:visited {
+	text-decoration:none;
+	font-weight: bold;
+	color:black;
+}
+
+.btn_c_aqua a:hover {
+	text-decoration:none;
+	font-weight: bold;
+	color:white;
+}
+
+
+
+.floatClear {
+    clear:              both;
+    }
+/* Red Buttons */
+ 
+.btn_l_red {
+	background: url(images/btn_red_l.png) no-repeat;
+	width:34px; 	
+	float:left;
+	height:73px;
+}
+
+.btn_c_red {
+	background: url(images/btn_red_c.png) repeat-x;
+	float:left;
+	font-weight:bold;
+	color: white;
+	height:73px;
+	text-decoration: none;
+}
+
+.btn_r_red {
+	background: url(images/btn_red_r.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+/* Green Buttons */
+
+.btn_l_green {
+	background: url(images/btn_green_l.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+.btn_c_green {
+	background: url(images/btn_green_c.png) repeat-x;
+	float:left;
+	height:73px;
+}
+
+.btn_r_green {
+	background: url(images/btn_green_r.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+
+/* Dark Blue buttons */
+
+.btn_l_dkblue {
+	background: url(images/btn_dkblue_l.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+.btn_c_dkblue {
+	background: url(images/btn_dkblue_c.png) repeat-x;
+	float:left;
+	color:white;
+	height:73px;
+}
+
+.btn_r_dkblue {
+	background: url(images/btn_dkblue_r.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+
+/* Aqua Buttons */
+
+.btn_l_aqua {
+	background: url(images/btn_blue_l.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+.btn_c_aqua {
+	background: url(images/btn_blue_c.png) repeat-x;
+	float:left;
+	height:73px;
+}
+
+.btn_r_aqua {
+	background: url(images/btn_blue_r.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+
+/* Yellow Buttons */
+
+.btn_l_yellow {
+	background: url(images/btn_yellow_l.png) no-repeat;
+	float:left;
+	width:34px; 	
+	height:73px;
+}
+
+.btn_c_yellow {
+	background: url(images/btn_yellow_c.png) repeat-x;
+	float:left;
+	height:73px;
+}
+
+.btn_r_yellow {
+	background: url(images/btn_yellow_r.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+
+/* Purple Buttons */
+
+.btn_l_purple {
+	background: url(images/btn_purple_l.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+.btn_c_purple {
+	background: url(images/btn_purple_c.png) repeat-x;
+	float:left;
+	height:73px;
+}
+
+.btn_r_purple {
+	background: url(images/btn_purple_r.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+/* Black buttons */
+
+.btn_l_black {
+	background: url(images/btn_black_l.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+.btn_c_black {
+	background: url(images/btn_black_c.png) repeat-x;
+	float:left;
+	color:yellow;
+	height:73px;
+}
+
+.btn_r_black {
+	background: url(images/btn_black_r.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+
+/* Clear buttons */
+
+.btn_l_clear {
+	background: url(images/btn_clear_l.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+.btn_c_clear {
+	background: url(images/btn_clear_c.png) repeat-x;
+	float:left;
+	height:73px;
+}
+
+.btn_r_clear {
+	background: url(images/btn_clear_r.png) no-repeat;
+	float:left;
+width:34px; 	
+	height:73px;
+}
+
+.tab_l_clear {
+	background: url(images/tab_clear_l.png) no-repeat;
+	float:left;
+width:27px; 	
+	height:33px;
+}
+
+.tab_c_clear {
+	background: url(images/tab_clear_c.png) repeat-x;
+	float:left;
+	height:33px;
+}
+
+.tab_r_clear {
+	background: url(images/tab_clear_r.png) no-repeat;
+	float:left;
+width:26px; 	
+	height:33px;
+}
+
+.tab_l_select {
+	background: url(images/tab_select_l.png) no-repeat;
+	float:left;
+width:27px; 	
+	height:33px;
+}
+
+.tab_c_select {
+	background: url(images/tab_select_c.png) repeat-x;
+	float:left;
+	color:white;
+ font-weight: bold;
+	height:33px;
+}
+
+.tab_r_select {
+	background: url(images/tab_select_r.png) no-repeat;
+	float:left;
+width:26px; 	
+	height:33px;
+}

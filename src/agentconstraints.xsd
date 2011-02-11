@@ -1,0 +1,135 @@
+<?xml version="1.0" ?>
+<xsd:schema id="agents" targetNamespace="http://neon.jini.org/agents"
+    xmlns:agents="http://neon.jini.org/agents" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+    jxb:version="1.0">
+
+    <!-- This is used to ensure that you do not need the -p parameter in XJC -->
+    <xsd:annotation>
+        <xsd:appinfo>
+            <jxb:globalBindings
+                fixedAttributeAsConstantProperty="true"
+                collectionType="java.util.ArrayList"
+                typesafeEnumBase="xsd:NCName"
+                choiceContentProperty="false"
+                typesafeEnumMemberName="generateError"
+                bindingStyle="elementBinding"
+                enableFailFastCheck="false"
+                generateIsSetMethod="false"
+                underscoreBinding="asCharInWord"/>
+            <jxb:schemaBindings>
+                <jxb:package name="org.jini.projects.neon.agents.constraints"/>
+
+            </jxb:schemaBindings>
+        </xsd:appinfo>
+    </xsd:annotation>
+
+    <xsd:element name="agentRequirements" type="agents:AgentReqs"/>
+
+    <xsd:complexType name="AgentReqs">
+        <xsd:sequence>
+        	<xsd:element name="domain" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="privileges" type="agents:privileges" minOccurs="0"/>
+            <xsd:element name="restrictions" type="agents:restrictions" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="restrictions">
+        <xsd:sequence>
+            <xsd:element name="meta" type="agents:metaConstraints" minOccurs="0"/>
+            <xsd:element name="code" type="agents:CodeConstraints" minOccurs="0"/>
+            <xsd:element name="system" type="agents:SystemConstraints" minOccurs="0"/>
+            <xsd:element name="instances" type="agents:InstanceConstraints" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:complexType name="metaConstraints">
+	    <xsd:sequence>
+	        <xsd:element name="item" type="xsd:string" maxOccurs="unbounded"/>
+	    </xsd:sequence>
+	</xsd:complexType>
+
+    <xsd:complexType name="privileges">
+        <xsd:sequence>
+            <xsd:element name="permission" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="OSDetails">
+        <xsd:sequence>
+            <xsd:element name="family" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="version" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="arch" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CodeConstraints">
+        <xsd:sequence>
+            <xsd:element name="classname" type="agents:classname" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="InstanceConstraints">
+        <xsd:sequence>
+            <xsd:element name="agentavail" type="agents:agentAvail" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="agentAvail">
+
+            <xsd:attribute name="name" type="xsd:string"/>
+            <xsd:attribute name="min" type="xsd:integer" default="1"/>
+
+    </xsd:complexType>
+
+    <xsd:complexType name="SystemConstraints">
+            <xsd:sequence>
+                <xsd:element name="status" type="xsd:string" minOccurs="0" />
+                <xsd:element name="cpu" type="agents:cpu" minOccurs="0"/>
+                <xsd:element name="memory" type="agents:memory" minOccurs="0"/>
+                <xsd:element name="jvmversion" type="xsd:string" minOccurs="0"/>
+                <xsd:element name="endian" type="xsd:string" minOccurs="0"/>
+                <xsd:element name="os" type="agents:OSDetails" minOccurs="0"/>
+
+            </xsd:sequence>
+        </xsd:complexType>
+
+
+    <xsd:complexType name="classname">
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute name="visibility" type="agents:visibility"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="status">
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute  name="visibility" type="agents:visibility"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="cpu">
+        <xsd:attribute name="number" type="xsd:integer"/>
+        <xsd:attribute name="load" type="xsd:decimal"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="memory">
+        <xsd:attribute name="pcfree" type="xsd:string"/>
+        <xsd:attribute name="minM" type="xsd:integer"/>
+
+    </xsd:complexType>
+
+    <xsd:simpleType name="visibility">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <jxb:typesafeEnumClass/>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="optional"/>
+            <xsd:enumeration value="required"/>
+            <xsd:enumeration value="requisite"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+
+
+</xsd:schema>

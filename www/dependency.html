@@ -1,0 +1,82 @@
+<%@ page contentType="text/html; charset=iso-8859-1" language="java" import="java.sql.*" errorPage="" %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Dependency Injection</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+<script type="text/javascript"  src="neon.js">
+</script>
+</HEAD>
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div>
+<div class="undertitle">
+<center>
+   Dependency Injection and POJO Agents 
+</center>
+</div>
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+
+<h3>Dependency Injection in Neon
+  </h3>
+<p>Neon supports basic dependency injection via Jini configuration files. Jini configuration files are much more java-like in their syntax than conventional dependency injection frameworks that use XML. Currently, at time of writing dependency injection is not currently complete, but is workable in it's current form. Request Dependency Injection from Neon, by adding the <code>@Injection</code> attribute to your class declaration.</p>
+<h3>POJO agents</h3>
+<p>Related to Dependency Injection, any object can be managed by Neon by tagging the class with the <code>@Agent</code> annotation.</p>
+<p>The <code>@Agent</code> annotation, allows Neon to mixin an agent scaffold alongside your current pojo, without interfering with the object's current class hierarchy. This POJO, and it's agent partner will be persisted just like any other agent in Neon.</p>
+<div class="example">package org.jini.projects.neon.annotations.tests;
+
+import org.jini.projects.neon.annotations.Agent;
+import org.jini.projects.neon.annotations.Injection;
+import org.jini.projects.neon.host.AgentContext;
+
+@Agent(name = "POJO", namespace = "simpler", init = "initMe")
+@Injection
+public class SimplePOJO{
+    public boolean initMe() {
+        System.out.println("I will be called instead of agent.init() method!");
+        return true;
+    }
+    
+    public void setGreeting(String greeting){
+        System.out.println("Greeting was set via DI to: " + greeting);
+    }
+    
+    public void setAgentContext(AgentContext hostContext){
+            System.out.println("Agent Context called in pojo");
+    }
+    
+}
+
+<div class="exampleFooter">Listing 1) The SimplePOJO object</div></div>
+<p></p>
+<div class="example">org.jini.projects.neon.annotations.tests.SimplePOJO{
+	greeting = "Hello There";
+}
+<div class="exampleFooter">Listing 2) The SimplePOJO configuration</div></div>
+
+<p>Of note is the <code>@Agent</code> annotation which supplies information to the agent delegate for the object, including the name and namespace, and the method that will be called to initialise the agent whenever it is started or restarted. All of these attributes are optional; Neon will use the agent class name as the <code>name</code> attribute, the package of the class for the <code>namespace</code> attribute, and will simply assume that there is no initialisation to be done, if you don't supply the <code>init</code> attribute</p>
+<p>The <code>@Injection</code> attribute tells Neon to run inject configuration information directly into the object through the setter methods.</p>
+<p>Also, the <code>setAgentContext()</code> method appears in the Agent interface which all agents derive from, but being a POJO this class is most definitely <strong>not</strong> an Agent. When Neon build the agent delegate,  any methods that are in the Agent interface that are subsequently called on this 'hybrid' object will, if there is a method signature match in the POJO, call the method on both the agent delegate and the POJO. This means you only need to implement the particular methods you require.</p>
+<<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+
+    </div>
+</div>
+</div>
+
+</body>
+</html>

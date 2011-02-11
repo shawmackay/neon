@@ -1,0 +1,1 @@
+apt -s ..\.apt-generated -d ..\.apt-classes -classpath ..\lib\exponew.jar;..\build\core;c:\development\jini2_1\lib\jsk-platform.jar org\jini\projects\neon\render\RenderAgent.java -XListAnnotationTypes -XPrintFactoryInfo -factorypath ..\build\core -factory org.jini.projects.neon.annotations.generators.ListClassApf

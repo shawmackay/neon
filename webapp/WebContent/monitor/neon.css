@@ -1,0 +1,336 @@
+body {
+	margin:0em;
+	padding: 0 em;
+	font-family: Verdana, Helvertica, Arial;
+	font-size: 12px;
+	background-color:#444;
+}
+
+.edge{
+	background-color:#444;
+	}
+
+.leftbody {
+	position:absolute;
+	margin-top:8px;
+	margin-left: 1%;
+	margin-bottom:16px;
+	width:47.5%;
+	background-color: white;
+	border-width:1px;
+	border-style:groove;
+	border-color:gray;	
+	left: 4px;
+}
+
+.mainbody {
+
+	margin-top:8px;
+	margin-left: 1%;
+	margin-bottom:16px;
+	bottom:16px;
+	
+	padding-left:8px;
+	top:8px;
+	
+	width:97%;
+	background-color: #FFF;
+	border-width:1px;
+	border-style:groove;
+	border-color:gray;	
+	left: 4px;
+}
+
+
+.bodyinsert{
+	padding-left: 4px;
+	padding-right: 4px;
+	margin-left: 4px;
+}
+
+.frontpageH1{
+	background-color:black;
+	min-width: 256px;
+}
+
+.rightbody {
+	position:absolute;
+	margin-top:8px;
+	margin-bottom:16px;
+	margin-left: 50.5%;
+	width:47.5%;
+	background-color: white;
+	border-width:1px;
+	border-style:groove;
+}
+
+
+#fixed {
+	position: absolute;
+	top:100px;
+	width: 192px;
+
+}
+
+.internalpage {
+	background-color: black;
+	color: white;
+	font-size:12px;
+	font-weight: normal;
+	border: #eeeeff 1px inset;	
+	padding-left:4px;
+}
+
+
+
+.internal{
+	border:1px gray inset;
+	top: 8px;
+	bottom:8px;
+	left: 8px;
+	padding-left:4px;
+	padding-top:4px;
+	padding-right:4px;
+	padding-bottom:4px;
+	right:8px;
+	margin-left: 4px;
+	margin-right: 8px;
+	background-color:#FFF;
+	margin-top: 8px;
+	margin-bottom: 8px;
+		font-weight: normal;
+	
+}
+
+#fixedheader {
+font-size:12px;
+	float: right;
+	width: 90px;
+	height: 20px;
+	background-color: #3333ff;
+	color: white;
+	border: #eeeeff 1px outset;
+	margin-top:-12px;
+}
+
+.exampleFooter {
+	border: 1px groove gray;
+	background-color:black;
+	background-image:url(images/neonembosssmall_green.jpg);
+	background-repeat:no-repeat;
+	text-align:right;
+	min-height:45px;
+	height:45px;
+	font-family:Arial, Helvetica, sans-serif;
+	padding-top:15px;
+	top:12px;
+	padding: 15 12 0 0;
+	margin-top: 12px;
+	font-size:16px;
+	font-style:italic;
+	padding-right:12px;
+}
+
+.exampleHeader {
+font-size:12px;
+
+	width: 100px;
+	background: #000 url(images/neontitlelgtgrn.png) ;
+	background-repeat:repeat-x;
+	color: white;
+	border: #eeeeff 1px outset;
+	margin-top:12px;
+	text-align:center;
+}
+
+
+td .nopad {
+	background-color: ff0000;	
+	min-width:200;
+	padding-left:0px;
+	padding-right:0px;
+}
+
+
+td.embedded{
+	background-color: #443388;
+	color:#eeeeff;
+	min-width:200;
+	padding-left:8px;
+	padding-right:8px;
+}
+
+td.leftcol {
+	background-color: #443388;
+
+	border: #ccccff 2px outset;
+	}
+	
+	th {
+	background-color: #acb3e2;
+	color: white;
+	border: #222 1px outset;
+	font-weight:normal;
+	font-size:14px;
+	background-image:url(images/neontitledkgrn.png)
+}
+
+table {
+	background-color: #444;
+	color: white;
+	font-size:12px;
+	border: #fff 3px groove;
+}
+
+.maintitle {	
+	border: black 1px groove;
+	font-size:32px;
+	font-style:oblique;
+	color:#eeeeff;	
+	padding-left:32px;
+	padding-right:32px;
+	padding-top:8px;
+	padding-bottom:8px;
+	background: #fff url(images/neontitle.png);
+	min-height:48;
+	max-height:48;
+}
+
+.smallimgblocktitle {	
+	border: black 1px groove;
+	font-size:32px;
+	font-style:oblique;
+	background-color:black;	
+	padding-left:32px;
+	padding-right:32px;
+	padding-top:8px;
+	padding-bottom:8px;
+	min-height:100;
+
+}
+
+
+
+.undertitle {
+	border: black 1px groove;
+	font-size:20px;
+	font-weight:bold;
+	font-style:normal;
+	
+	color:black;
+	padding-left:32px;
+	padding-right:32px;
+	padding-top:0px;
+	padding-bottom:0px;
+	background: #fff url(images/buttonback.png);
+
+	height:6px;
+	min-height:32px;
+	max-height:32px;
+}
+
+.neonback1{
+	background-color: #eeeeff;
+}
+
+.break {
+	position: static;
+	margin-left: 30px;
+	padding-left:16px;
+	padding-right:16px;
+	padding-top:8px;
+	padding-bottom:8px;
+	background: #acb3e2 url(images/neontitle.png);
+	border:#acb3e2 4px groove;
+	font-size:24px;
+	max-width:300px;
+	min-height:48px;
+	max-height:48px;
+	color:#FFF;
+	
+}
+
+.example{
+	margin-left:120px;
+	left:120px;
+	margin-right:60px;
+	right:60px;
+	background-color:black;
+	border: 2px inset navy;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:11px;
+	white-space: pre;
+	color: white;
+	display:block;
+	overflow:auto;
+	
+}
+
+.break2 {
+	position: static;
+	margin-left:0px;
+	padding-left:16px;
+	padding-right:16px;
+	padding-top:8px;
+	padding-bottom:8px;
+	background: #acb3e2 url(images/neontitle.png);
+	border:#acb3e2 4px groove;
+	font-size:14px;
+	max-width:500px;
+	min-height:32px;
+	max-height:32px;
+	color:#FFF;
+	
+}
+
+
+.neonback2{
+	background-color: #acb3e2;
+}
+
+.neonbackmenu{
+	left:0px;
+	margin-left:0px;
+	background-color: #acb3e2;
+	background: #acb3e2;
+}
+
+.neonback3{
+	background-color: #8c93c2;
+	background-color: #555;
+	border: #eeeeff 3px inset;
+	color: white;
+	padding-left:2px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-right:2px;
+	padding: 1px 1px px 1px;
+	margin: 2px 2px 2px 2px;
+}
+
+.neonback4{
+	background-image:url(images/neontitledkred.png);
+	border: #eeeeff 3px inset;
+	color: white;
+	padding-left:2px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-right:2px;
+	padding: 1px 1px px 1px;
+	margin: 2px 2px 2px 2px;
+}
+
+
+h1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 24px;
+}
+h2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+}
+h3 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+}

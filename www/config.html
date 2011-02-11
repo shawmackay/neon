@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Installation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</HEAD>
+<body> 
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle"> <img src="images/neonemboss_small_green.jpg"> </div> 
+<div class="undertitle"> 
+  <center>
+     Installation and Configuration
+  </center> 
+</div> 
+ <div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">  
+  <h1>Installing Neon</h1> 	
+
+  <p>Once you have downloaded the latest release of the Neon codebase, you will need to ensure that Neon's class dependencies are available. If you run the installer version of Neon, the installer will enable you to download the dependencies automatically, once Neon has been unpacked and the post-install configuration screen has been shown. Neon comes supplied with part of the Zenith package. If you need to run Neon as a SSI (single system image) grid, you will need to download and install the full Zenith package, and run the Broker and MessageRouter services. Restarting Neon will allow it to view the grid</p>
+  <p><strong>Activation</strong></p>
+  <p><!--Neon is activatable, but not in the normal sense. Usually with a service, the service implementation exports itself as an activatable object to the activation system, however, in Neon's case, because it's initialisation process is quite complicated and involved, and also it exports more than one service, activation should be used as a means to re-bootstrap the entire Neon process including any services that Neon creates. To this end, Neon bootstraps through two classes, ServiceStartup and ActivatableServiceStartup. ActivatableServiceStartup is a class that implements both Serializable and Remote (but no remote methods, and simply, when instructed by the activation system, looks up ServiceStartup via Class.forname casting it to ServiceStartupIntf, and starts another Thread that runs the standard ServiceStartup class. This reduces the number of classes that need to be kept in the service download jar, but still allows activation to be used for service startup. For determinate execution under activation, use ServiceExporters with specified ports.</p>
+  <p>You can run the activatable service by running <em>start-activate-neon </em></p>-->
+	Neon is not currently enabled for activation, because of issues over how Neon starts up. This is likely to be resolved in the near future.
+  <h2>Installing with Tomcat</h2> 
+  <p>Neon, by default, will not run an embedded instance of Tomcat, however this can be changed (see below). Neon does come with a management interface that is run through an embedded Tomcat instance. Neon does not interfere with your tomcat installation, it simply runs the start method of Tomcat, and to all intents and purposes, your existing installation will run as normal, excepting the fact that it is now run inside another app rather than standalone. <p/>If, however, you start Tomcat at system startup, via, say, a Windows Service, it may be easier for you to download a new Tomcat version, and install the manager web-app into this new directory. If you install Neon through the Neon installer, you will be asked where your tomcat installation is and be asked whether you want to install the webapplication, once the installation is properly configured to your environment.</p> 
+  <h2>The neon.config file</h2> 
+  <p>Neon uses a jini configuration file to do most of the configuring of the service itself, although configuration of domains, etc are left to the startup.xml file Neon uses the <code>org.jini.projects.neon</code> component space The following describes the entry definitions for Neon
+</p>
+  <table width="90%"  border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <th width="15%" scope="col">Entry name </th>
+      <th width="62%" scope="col">Description</th>
+      <th width="10%" scope="col">Type</th>
+      <th width="13%" scope="col">Required?</th>
+    </tr>
+    <tr>
+      <td>serverExporter</td>
+      <td>The Exporter definition for the server </td>
+      <td><div align="center">Exporter</div></td>
+      <td><div align="center">Y</div></td>
+    </tr>
+    <tr>
+      <td>initialLookupGroups</td>
+      <td>Used for locating a Jini group prior to joining it</td>
+      <td><div align="center">String[]</div></td>
+      <td><div align="center"></div></td>
+    </tr>
+    <tr>
+      <td>codebase</td>
+      <td>RMI Server codebase for downloading classes </td>
+      <td><div align="center">String</div></td>
+      <td><div align="center">Y</div></td>
+    </tr>
+    <tr>
+      <td>persistenceDirectory</td>
+      <td>Location of directory where Neon stores it's serviceId</td>
+      <td><div align="center">String</div></td>
+      <td><div align="center">Y</div></td>
+    </tr>
+    <tr>
+      <td>maxAgentsofType</td>
+      <td>Specifies the maximum number of agents of the same class allowed in a domain</td>
+      <td><div align="center">int</div></td>
+      <td><p align="center">N</p></td>
+    </tr>
+    <tr>
+      <td>messagingexportMgrConfig</td>
+      <td>Location of the exporter manager configuration for the messaging service </td>
+      <td><div align="center">String</div></td>
+      <td><div align="center">Y</div></td>
+    </tr>
+    <tr>
+      <td>exporterMgrConfig</td>
+      <td>Location of the exporter manager configuration for the agent service </td>
+      <td><div align="center">String</div></td>
+      <td><div align="center">Y</div></td>
+    </tr>
+    <tr>
+      <td>startupfile</td>
+      <td><p>Location of the xml file that describes the partitions and initial agent deployments when Neon is started (<em><strong>see the default file: conf/startup.xml)</strong></em></p></td>
+      <td><div align="center">String</div></td>
+      <td><div align="center">Y</div></td>
+    </tr>
+    <tr>
+      <td>maxAgentsofAncestor</td>
+      <td>Specifies the maximum number of agents with the same ancestor class (excepting AbstractAgent) that can be deployed in a domain </td>
+      <td><div align="center">int</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+    <tr>
+      <td>useThreadGroups</td>
+      <td><strong>Unused</strong> - tell Neon to use thread groups when deploying agents </td>
+      <td><div align="center">boolean</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+    <tr>
+      <td>consoleLogLevel</td>
+      <td>A Level string from java.util.logging.Level - specifies the amount of information to be sent to the console </td>
+      <td><div align="center">String</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+    <tr>
+      <td>fileLogLevel</td>
+      <td>A Level string from java.util.logging.Level - specifies the amount of information to be sent to log files </td>
+      <td><div align="center">String</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+    <tr>
+      <td>tomcatBase</td>
+      <td>Base directory of where your tomcat installation is for running Tomcat embedded within Neon </td>
+      <td><div align="center">String</div></td>
+      <td><div align="center">Y - if useTomcat is true </div></td>
+    </tr>
+    <tr>
+      <td>useTomcat</td>
+      <td>Specify whether to start Tomcat internally inside the Neon instance. If this is set to False, you will not need to include tomcat jars on classpath </td>
+      <td><div align="center">Boolean</div></td>
+      <td><div align="center">Y</div></td>
+    </tr>
+    <tr>
+      <td>proxyPreparer</td>
+      <td>Jini Proxy Preparer for Eros proxy </td>
+      <td><div align="center">ProxyPreparer</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+    <tr>
+      <td>initialLookupLocators</td>
+      <td>Set of Lookup Locators that Neon should use when joining </td>
+      <td><div align="center">LookupLocator[]</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+    <tr>
+      <td>initialLookupAttributes</td>
+      <td>Array of <code>Entry</code>s that Neon uses when joining lookup services</td>
+      <td><div align="center">Entry[]</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+    <tr>
+      <td>activationSystemPreparer</td>
+      <td>Preparer for the activation system proxy </td>
+      <td><div align="center">ProxyPreparer</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+    <tr>
+      <td>activationIdPreparer</td>
+      <td>Preparer for the activation Id proxy </td>
+      <td><div align="center">ProxyPreparer</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+    <tr>
+      <td>kernelSDMGroups</td>
+      <td>Specifies the set of groups that are passed to Neon's kernel ServiceDiscoveryManager </td>
+      <td><div align="center">String</div></td>
+      <td><div align="center">N</div></td>
+    </tr>
+  </table>
+  <p>&nbsp;  </p>
+	
+	<h1>Using the Lamplighter Installer</h1>
+<p>If you install Neon through the executable jar, the installer will generate a number of configuration files, and scripts, based on parameters that you specify. If you choose to enable the Tomcat integration, it is advised that you download a complete version of Tomcat, or pointing the Tomcat base to an existing version, this will be configured for you automatically when you either download a new instance of Tomcat from the internet, or poinbt Neon to an existing local directory for Tomcat.</p>
+  <p> In effect, Neon scans all the directories in your tomcat directory for libraries, and sets your Tomcat instance directory as your base path for your applications. The installer crates an install-webapp command in the Neon root directory, this will copy the neonadmin.war file to your tomcat instance. For most of the configuration entries described above, the installer will generate the configuration files, according to the parameters you set. You will also be able to copy the dl jar files for Neons codebase to a loca directory, which you can then place on your webserver. By default, Neon will start in development mode. i.e. will not persist agents on shutdown. This enables you to test your configuration. </p>
+  <h2>The startup.xml file</h2> 
+  <p>Domains and agents that you want to run at system startup are defined in the startup.xml file. Below is a sample startup.xml. Please note that any agents created through the startup.xml will, on being transferred to another instance, be annotated with the codebase of the originating Neon instance. Please ensure that you update the codebase entry in your configuration file, if extra classes are required to be downloaded.</p>
+  <div class="example">
+&lt;startup>
+ &lt;domains>        
+  &lt;domain name="Global" persistonshutdown="false">
+    &lt;hostAgents>
+      &lt;pre>	               
+        &lt;agent classname="org.jini.projects.neon.service.ServiceAgent" number="2" waitafterinit="10"/>
+        &lt;agent classname="org.jini.projects.neon.callbacks.CallbacksAgent" number="2"/>
+        &lt;agent classname="org.jini.projects.neon.recovery.CheckpointAgent" number="2" 
+             configuration="file:conf/neon.config"/>
+        &lt;agent classname="org.jini.projects.neon.service.TransferAgent" number="2"/>
+        &lt;agent classname="org.jini.projects.neon.host.transactions.TransactionAgent" number="4"/>
+        &lt;agent classname="org.jini.projects.neon.service.MonitorAgent" number="1"/>
+        &lt;agent classname="org.jini.projects.neon.web.RenderAgent" number="1"/>
+        &lt;agent classname="org.jini.projects.neon.users.agents.UserDataAgent" number="1"/>
+        &lt;agent classname="org.jini.projects.neon.agents.sensors.TimeSensor" number="1"/>
+        &lt;agent classname="org.jini.projects.neon.agents.sensors.TimeListener" number="1"/>
+        &lt;agent classname="org.jini.projects.neon.vertigo.management.SliceAgentImpl" number="1" 
+             configuration="file:conf/slicemgr.config"/>
+        &lt;agent classname ="org.jini.projects.neon.host.transactions.tests.JavaSpaceOpsAgent" number="3" 
+             configuration="file:conf/JavaSpaceOps.config" waitafterinit="5"/>
+        &lt;agent classname ="org.jini.projects.neon.host.transactions.tests.UpdaterAgent" number="1" waitafterinit="5"/>
+        &lt;agent classname ="org.jini.projects.neon.host.transactions.tests.UpdateAgentAbort" number="1"/>
+        &lt;agent classname ="org.jini.projects.neon.host.transactions.tests.UpdateAgentCommit" number="1"/>
+        &lt;agent classname ="org.jini.projects.neon.host.transactions.tests.EmployeeAgent" number="1"/>
+      &lt;/pre>
+      &lt;wait time="10"/>
+      &lt;post>
+        &lt;agent classname="org.jini.projects.neon.recovery.RecoveryAgent" number="1"
+             configuration="file:conf/neon.config"/>
+      &lt;/post>
+     &lt;/hostAgents>
+     &lt;delegates>
+       &lt;delegate type="producerinfo" interfaceclass="org.jini.projects.zenith.message.ProducerInterest" 
+            delegateclass="org.jini.projects.neon.dynproxy.invoker.ProducerHandler"/>
+       &lt;delegate type="Transaction" 
+            interfaceclass="org.jini.projects.neon.host.transactions.TransactionalResource" 
+            delegateclass="org.jini.projects.neon.dynproxy.invoker.PropagatedTransactionDelegate"/>
+     &lt;/delegates>
+   &lt;/domain>
+   &lt;domain name="testDomain">
+     &lt;hostAgents>
+       &lt;pre>
+         &lt;agent classname="org.jini.projects.neon.recovery.CheckpointAgent" number="1" 
+              configuration="file:conf/neon.config"/>
+         &lt;agent classname="org.jini.projects.neon.callbacks.CallbacksAgent" number="1"/>
+       &lt;/pre>
+       &lt;wait time="10"/>
+       &lt;post>
+         &lt;agent classname="org.jini.projects.neon.recovery.RecoveryAgent" number="1" 
+              configuration="file:conf/neon.config"/>
+       &lt;/post>
+     &lt;/hostAgents>
+     &lt;delegates>
+       &lt;delegate type="producerinfo" 
+            interfaceclass="org.jini.projects.zenith.message.ProducerInterest" 
+            delegateclass="org.jini.projects.neon.dynproxy.invoker.ProducerHandler"/>
+       &lt;delegate type="Transaction" 
+            interfaceclass="org.jini.projects.neon.host.transactions.TransactionalResource" 
+            delegateclass="org.jini.projects.neon.dynproxy.invoker.PropagatedTransactionDelegate"/>
+     &lt;/delegates>
+   &lt;/domain>
+ &lt;/domains>
+&lt;/startup>
+</div>
+<h2>Recovery</h2>
+Although the startup.xml file works very well on a clean instance of Neon, in order to support continuous agents, Neon doesn't rely on the startup.xml file, as the only way to restart an instance. Really, you should think of the startup.cml file as a way of initialising an instance, and then remove the reference to the startup file. Why should you do this? Neon is not like a conventional application server. The agents and objects that are deployed into it are persisted and recreated when you shutdown and restart you instance. Essentially, Neon restores as much of it's previous state as it can between instance reboots; of course, some agents will transfer and be recovered on other hosts in order to maintain the stability of the grid, but others don't need to be restarted. In essence, the lifecycles of the agents and applications deployed into an instance are not tied to the lifecycle of the instance that they are currently running on. <br/>
+<h3>Agent types and Recovery</h3>
+There are three agent classes that affect how and when agents are recovered.<br/>
+<ul>
+<li>Bound agents</li>
+<li>Lightweight agents</li>
+<li>Full agents (default agent class)</li>
+</ul>
+  <p>Bound agents, are persisted to the space and will only be recovered by the service that stored them, or, more precisely, be looked for by an agent host with the same ServiceID as the bound agent entry's are marked with. Lightweight agents are stored but can be restarted on any other partition in the same domain on the network. </p>
+  <p>Lightweight agents and Bound agents are similar in that they don't persist the actual agent instance, but instead store the agent meta-data, identity information and the class name to recreate the agent with. For this reason, codebases may be an issue. The advantage is that you do not have to worry about the persistent form of your agent, thus the storage requirements for the entry are typically smaller. Typically, lightweight agents are some of your utility agents, whereas you may have bound agents that are utility agents that you don't want to restart on other systems. For instance moving 5 ServiceAgent instances may slow down the other hosts on your network. </p>
+  <p>Full agents are what your business agents would most likely be coded as; they have a persistent state, they utilise mobile code (because they retain the codebase annotations), and you want them to be running irrespective of individual system failure, and in the cause of failure to restart, still retain all the state that they had previously. </p>
+  <h1>Configuring your agents</h1> 
+  Every agent is capable of having a configuration attached to it, so that you can defer some details of the operation until runtime.<br/> 
+  In the startup.xml file, the &lt;agent&gt; tag has a configuration attribute. This attribute is a URL that points to a configuration file. This is loaded when you call <code>getAgentConfiguration()</code>. If you use a different provider from the standard Jini configuration provider, you may need to check how your configurations are loaded.
+  <hr> 
+  <div align="left"><a href="neonintro.html">Tutorial Main Page</a></div> 
+  <p>&nbsp;</p> 
+</div> 
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accounts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="file:/D:/work/bulkupload.xsd" role="ASC-ACD-Clinical Supervisors">
+    <account>
+        <name>
+            <title>Mr</title>
+            <firstname>Calum</firstname>
+            <lastname>Shaw-Mackay</lastname>
+        </name>
+        <home>
+                <address>
+                    <line1>Ashworth Building</line1>
+                    <line2>University of Salford</line2>
+                    <town>Salford</town>
+                    <county>Greater Manchester</county>
+                    <postcode>M5 4WT</postcode>
+                    <country>United Kingdom</country>
+                </address>
+            <phone>0161 255 6681</phone>
+            <email>c.shaw-mackay@salford.ac.uk</email>
+        </home>
+        <dateofbirth>1976-02-28</dateofbirth>
+        <emergencycontacts>
+            <name>Ambulance</name>
+            <phoneNumber>999</phoneNumber>
+        </emergencycontacts>
+        <oncampuspc>false</oncampuspc>
+        <sponsordetails>
+            <name>S.Someone</name>
+            <jobTitle>Head of Something</jobTitle>
+            <email>c.shaw-mackay@salford.ac.uk</email>
+        </sponsordetails>
+        <startdate>2007-10-18</startdate>
+        <enddate>2007-12-31</enddate>
+        <joiningCreds>joiningCreds0</joiningCreds>
+        <company>
+            <name>Blah Services</name>
+            <jobTitle>Janitor</jobTitle>
+            
+            <address>
+                <line1>1 The High Street</line1>
+                <line2>Some District</line2>
+                <town>Anytown</town>
+                <county>Anywhere</county>
+                <postcode>AB1 2CD</postcode>
+                <country>United KIngdom</country>
+            </address>
+            <phoneNumber>01234 56789</phoneNumber>
+        </company>
+    </account>
+</accounts>

@@ -1,0 +1,1 @@
+$[javaloc] -classpath ".;$[prodlibs];$[jinilibs];$[additionallibs];$[serviceuiloc]" -Djava.security.policy=$[POLICY] -Djava.security.auth.login.config=$[LOGIN] -Xms20m org.jini.projects.neon.service.ServiceStartup "$[config]"

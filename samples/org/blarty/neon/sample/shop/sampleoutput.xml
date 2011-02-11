@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doc>
+    <empty>false</empty>
+    <entry>
+        <key>SGDGT</key>
+        <value>
+            <name>SuperGadget</name>
+            <quantityAvailable>16</quantityAvailable>
+            <reference>SGDGT</reference>
+            <unitprice>9.99</unitprice>
+        </value>
+    </entry>
+    <entry>
+        <key>WDGT1</key>
+        <value>
+            <name>Widget V1</name>
+            <quantityAvailable>20</quantityAvailable>
+            <reference>WDGT1</reference>
+            <unitprice>1.99</unitprice>
+        </value>
+    </entry>
+</doc>

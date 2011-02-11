@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Untitled Document</title>
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</head>
+<body> 
+
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle"> 
+<img src="images/neonemboss_small_blue.jpg"> 
+</div> 
+<div class="undertitle"> 
+  <center>
+     Collaboration
+  </center> 
+</div> 
+ <div class="paneldisplayLarge"> 
+    <div class="innerLGPanel"> 
+
+
+  <h2>Creating your first collaborative agent</h2> 
+To recap, in order to an agent to expose it's functionality to other agents, it must not only be an agent (otherwise it couldn't be deployed into Neon) and it must implement an interface that in turn extends Collaborative.
+  <div class="example">package org.jini.projects.neon.neontests.tutorial.simple;
+import org.jini.projects.neon.collaboration.Collaborative;
+
+public interface HelloAgent extends Collaborative {
+		public String sayHello(String name); 
+}<div class="exampleFooter">Listing 1) Example Collaborative interface</div></div> 
+  <p>Now any agent that implements this interface will 'advertise' this interface to Neon, and when Neon creates your proxy in response to AgentContext#getAgent, it will ensure that the proxy implements 'HelloAgent' and allow you to cast to it. </p> 
+  <p>So now, we'll create an agent implementation, and a client agent that will call the method.</p> 
+  <div class="example">package org.jini.projects.neon.neontests.tutorial.simple; 
+import java.util.Calendar; 
+import java.util.Date; 
+import java.util.GregorianCalendar; 
+import org.jini.projects.neon.agents.AbstractAgent; 
+
+public class HelloAgentImpl extends AbstractAgent implements HelloAgent { 
+	public HelloAgentImpl(){ 
+		this.name = "Hello"; this.namespace = "examples"; 
+	} 
+	@Override public boolean init() {
+		return true; 
+	} 
+	
+	public String sayHello(String name) {
+		Date d = new Date(); 
+		Calendar cal = new GregorianCalendar(); 
+		cal.setTime(d); 
+		int hrs = cal.get(Calendar.HOUR_OF_DAY); 
+		StringBuffer greeting = new StringBuffer(); 
+		greeting.append("Good "); 
+		if(hrs <12) 
+			greeting.append("Morning");
+		else 
+			if(hrs<18) 
+				greeting.append("Afternoon"); 
+			else 
+				if(hrs <24) 
+					greeting.append("Evening"); 
+		greeting.append(", " + name); 
+		return greeting.toString(); 
+	} 
+}<div class="exampleFooter">Listing 2) Implementation of the 'Hello Agent' interface</div></div> 
+  <p>And the client.....</p> 
+  <div class="example">package org.jini.projects.neon.neontests.tutorial.simple; 
+import org.jini.projects.neon.agents.AbstractAgent; 
+import org.jini.projects.neon.host.NoSuchAgentException; 
+public class AnyoneThereAgent extends AbstractAgent implements Runnable{ 
+	@Override public boolean init() { 
+		return true; 
+	} 
+	
+	public void run() { 
+		try { 
+			HelloAgent hello = (HelloAgent) context.getAgent("examples.Hello");
+			getAgentLogger().info(hello.sayHello("Uncle Bob")); 
+			getAgentLogger().fine("I got a response!"); 
+		} catch (NoSuchAgentException e) { 
+			getAgentLogger().info("No one there...."); 
+			e.printStackTrace(); 
+		} 
+	} 
+}<div class="exampleFooter">Listing 3) Client to the HelloAgent</div></div> 
+  <p>Deploying the agents</p> 
+  <p>In development, it is generally advised, to put your agents into the startup.xml file</p> 
+  <p>So, open up &lt;neon-root&gt;/conf/startup.xml[1] and add the following lines to the hostagent section.</p> 
+  <pre> &lt;agent classname=&quot;org.jini.projects.neon.neontests.tutorial.simple.HelloAgentImpl&quot; number=&quot;1&quot;/&gt;
+ &lt;agent classname=&quot;org.jini.projects.neon.neontests.tutorial.simple.AnyoneThereAgent&quot; number=&quot;1&quot;/&gt;</pre> 
+  <p>Then when you add restart Neon, you should look for the following lines in the output</p> 
+  <p>&lt;OUTPUT&gt;</p> 
+  <p>This means the agents have deployed successfully, and are interacting with each other properly. </p> 
+  <hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+
+</div>
+</div>
+</div> 
+</body>
+</html>

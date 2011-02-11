@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Developing agents</title>
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</head>
+
+
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_blue.jpg">
+</div>
+<div class="undertitle"> 
+  <center>
+     Building your first agents 
+  </center> 
+</div> 
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+
+
+
+  <h2>Jumping straight in</h2>
+In this section there are a number of examples outlined, to use these you will need to compile these examples with both neon.jar and zenith.jar on your classpath
+  <div class="example">package org.jini.projects.neon.neontests.tutorial.simple;
+
+import org.jini.projects.neon.agents.AbstractAgent;
+
+public class SimpleAgent extends AbstractAgent {
+
+    private static final long serialVersionUID = 3256720689011568688L;
+
+    public boolean init() {		
+		getAgentLogger().info("Hello World");
+		return true;
+	}
+
+}<div class="exampleFooter">Listing 1) The simplest agent</div></div>
+  <p>For completeness, we've added in a serialVersionUID, and we've used a method defined in the Agent interface to get a reference to the java Logger. This is the smallest example (bar removing the serialVersionUID, and using the default package) that I could think of that would give you some form of feedback to what methods are being called.</p>
+  <p>This is a complete agent, but Neon does a number of things here. Normally, you would specify a name/namespace pair in the constructor, AbstractAgent has two fields named, unsurprisingly, <em>name</em> and <em>namespace </em> to allow you to specify your own grouping structure. 
+    If you don't specify a name or namespace, Neon will take the name of the Agent, and assuming a naming convention of &lt;name&gt;Agent, removes the <em>'Agent'</em> (and any characters after 'Agent') from the end of the classname, and uses the package of the class for the namespace. So in the example above, the agent would be referred to in the system as <em>org.jini.projects.neon.neontests.tutorial.simple.Simple</em></p>
+  <p>In addition, AbstractAgent will ensure that your agent has a specific identity. Upon deploying this agent into the system, Neon will use the name information and identity to generate channels and attach your agent to it's group router. Neon will also ensure that any configuration URLs have been set, although in the example above we don't actually use one. Now we'll flesh out the agent a bit more.</p>
+<div class="example">package org.jini.projects.neon.neontests.tutorial.simple;
+
+import org.jini.projects.neon.agents.AbstractAgent;
+
+public class SimpleAgent extends AbstractAgent implements Runnable{
+
+    private static final long serialVersionUID = 3256720689011568688L;
+
+    public SimpleAgent(){
+        this.name="Simple2";
+        this.namespace="neon";
+    }
+		
+    public boolean init() {		
+        getAgentLogger().info("Initialising agent on " + context.getCurrentHost());
+        return true;
+    }
+
+    public void run() {
+        getAgentLogger().info("Agent started");	
+    }
+}<div class="exampleFooter">Listing 2) Expanding upon the SimpleAgent</div></div>
+<p>In this example, we've given the agent a specific namespace declaration of "neon.Simple2", and we've requested Neon to start it on a new Thread
+</p>
+<h2>A tour of the Agent interface and AbstractAgent</h2>
+<p>We've already discussed getAgentLogger(), here we'll discuss a little more about the Agent Interface, and a little about the default implementations provided by AbstractAgent</p>
+<table width="90%"  border="0" cellspacing="2" cellpadding="2">
+  <tr>
+    <th scope="col" colspan="2" style="background-image:url(images/neontitledkred.png)">Agent State</th>
+  </tr>
+  <tr>
+    <td>getAgentState</td>
+    <td>Returns the Primary state of the agent</td>
+  </tr>
+  <tr>
+    <td>setAgentState</td>
+    <td>Sets the Primary state of the agent </td>
+  </tr>
+  <tr>
+    <td>getSecondaryState</td>
+    <td>When the primary state is set to a passive state, the Secondary state is populated with the previous active state. Thus, if an agent has a Primary state of ATTACHED, and the agent has to be transferred from one system to another, the Primary state will be set to TRANSFER, and the Secondary state will be set to ATTACHED. Once the agent is redeployed, the Secondary state again becomes the Primary state. </td>
+  </tr>
+  <tr>
+    <th colspan="2" style="background-image:url(images/neontitledkred.png)">Lifecycle</th>
+
+  </tr>
+  <tr>
+    <td>askHalt</td>
+    <td>Ask the agent to halt it's run() method processing, effectively allowing it's running thread to complete. (If you implement Runnable)</td>
+  </tr>
+  <tr>
+    <td>shouldHalt</td>
+    <td>Agents should check the shouldHalt value to see if an external system, including being stopped whilst under activation, has asked your agent to halt (Check this method in your run() method, if your Agent implements Runnable)</td>
+  </tr>
+  <tr>
+    <td>halt</td>
+    <td>Change the agent lifecycle to show that the agent processing has been halted </td>
+  </tr>
+  <tr>
+    <td>isHalted</td>
+    <td>Check if the agent has completed it's threaded method and it's own processing has been halted</td>
+  </tr>
+  <tr>
+    <td>isStopped</td>
+    <td>Check if the agent has finished it's call to stop </td>
+  </tr>
+  <tr>
+    <td>isCompleted</td>
+    <td>Check if the agent has completed</td>
+  </tr>  
+  <tr>
+    <td>setStopped</td>
+    <td>Agents that override the stop method, should call this at the end of their method to ensure the system knows the agent has stopped </td>
+  </tr>
+  <tr>
+    <td>setCompleted</td>
+    <td>Agents that override the complete method, should call this at the end of their method to ensure the system knows the agent has completed, and is available for decommissioning</td>
+  </tr>
+  <tr>
+    <td>run<br/><font size=-2><em>(Implemented from java.lang.Runnable)</em></font></td>
+    <td>Run the agents own processing, instead of it's collaborative methods which run in the thread of the message dispatcher </td>
+  </tr>
+  <tr>
+    <td>init</td>
+    <td>Initialise the agent prior to use - always called when an agent is deployed </td>
+  </tr>
+  <tr>
+    <td>stop</td>
+    <td>Run before the agent can be transferred or the service stopped </td>
+  </tr>
+  <tr>
+    <td>complete</td>
+    <td>Run when the agent is just about to be decommisioned, killed, or it's processing has reached it's natural conclusion </td>
+  </tr>
+  <tr>
+    <th colspan="2" style="background-image:url(images/neontitledkred.png)">Configuration</th>
+
+  </tr>
+  <tr>
+    <td>getAgentConfiguration</td>
+    <td>Obtains a jini Configuration instance which can be then used in the normal way </td>
+  </tr>
+  <tr>
+    <td>getConstraints</td>
+    <td>Defines the requirements that the Agent needs in the host in order to run properly</td>
+  </tr>
+  <tr>
+    <td>getMetaAttributes</td>
+    <td>Allows extra information to be tagged into an agent, used when getting a reference to an agent </td>
+  </tr>
+  <tr>
+    <td>setConfigurationLocation</td>
+    <td>Sets the URL from which the jini Configuration instance will be initialised with </td>
+  </tr>
+  <tr>
+    <td>setConstraints</td>
+    <td>Set a constraints object for the agent which can be used to filter out services that cannot deploy the agent </td>
+  </tr>
+  <tr>
+    <td>setMetaAttributes</td>
+    <td>Sets the extra meta-information for an agent </td>
+  </tr>
+  <tr>
+    <th colspan="2" style="background-image:url(images/neontitledkred.png)">Identities</th>
+
+  </tr>
+  <tr>
+    <td><p>getName</p>      </td>
+    <td>Obtains the name given to the agent class or instance </td>
+  </tr>
+  <tr>
+    <td>getNamespace</td>
+    <td>Obtains the namespace given to the agent class or instance </td>
+  </tr>
+  <tr>
+    <td>getIdentity</td>
+    <td>Obtains the unique identity given to the agent instance </td>
+  </tr>
+  <tr>
+    <th colspan="2" style="background-image:url(images/neontitledkred.png)">Environment methods </th>
+
+  </tr>
+  <tr>
+    <td>getAgentContext</td>
+    <td>Obtains an object through which an agent can interact with it's environment </td>
+  </tr>
+	<tr>
+    <td>setAgentContext</td>
+    <td>Sets the environmental object </td>
+  </tr>
+  <tr>
+    <td>getReplyObject</td>
+    <td>Obtains the last response for a call </td>
+  </tr>
+	<tr>
+    <td>getAgentLogger</td>
+    <td>Gets a java.util.logging.Logger that the agent can use for logging purposes.</td>
+  </tr>
+</table>
+<p>The majority of the agent interface is used by the framework to query and effect lifecycle changes on your agent, and to properly setup and register your agent in Neon. However, the single most important method, from the agent developers' perspective, in the Agent interface is <em>getAgentContext, </em>because it is through the AgentContext that you get references to other agents.</p>
+<h2>Getting an agent</h2>
+<p>There are essentially 3 different ways of getting an agent, each providing different ways of interaction with the agent. The first way is synchronous calls, i.e. Agent A calls agent B and blocks until the call returns. The second way is half-async, where you pass a AsyncHandler to the getAsynchronousAgent call and you get called back when your call completes, but your call semantics are the same in the synchronous calls, which can be confusing. The third way is to generate an asynchronous interface, which gives cleaner call semantics. For a fuller discussion of this see the asynchronous agents <a href="async.html">section</a> </p>
+<p>So now we'll expand our basic agent and get a reference to an agent and use it.</p>
+<div class="example">package org.jini.projects.neon.neontests.tutorial.simple;
+
+import org.jini.projects.neon.agents.AbstractAgent;
+import org.jini.projects.neon.service.ServiceAgent;
+
+import java.util.Iterator;
+import java.util.List;
+
+import net.jini.core.lookup.ServiceItem;
+
+public class SimpleAgent extends AbstractAgent implements Runnable{
+
+    private static final long serialVersionUID = 3256720689011568688L;
+
+    public SimpleAgent(){
+        this.name="Simple2";
+        this.namespace="neon";
+    }
+		
+    public boolean init() {		
+        getAgentLogger().info("Initialising agent on " + context.getCurrentHost());
+        return true;
+    }
+
+    public void run() {
+        getAgentLogger().info("Agent started");	
+        ServiceAgent svc = (ServiceAgent) context.getAgent("neon.Services");
+        List l = svc.getAgentHosts();
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+          ServiceItem item = (ServiceItem) iter.next();
+          System.out.println("An Agent service with ID "+ item.serviceID + " has been found";        
+        }
+    }
+}
+          <div class="exampleFooter">Listing 3) Getting other agents</div></div>
+<p>Although a trivial example, this agent finds an instance of an agent called <em>neon.Services</em>, gets a list of all the Agent services that it can access, and then lists them. You are likely to use utility (or <em>local</em>) agents, like ServiceAgent, a lot. The interface for ServiceAgent is shown below </p>
+<div class="example">package org.jini.projects.neon.service;
+
+import java.util.List;
+
+import org.jini.projects.neon.agents.SensorAgent;
+import org.jini.projects.neon.collaboration.Collaborative;
+
+public interface ServiceAgent extends Collaborative, SensorAgent{
+	public abstract List getAgentHosts();
+	public abstract List getNamedService(String name, Class serviceClass);
+	public abstract List getService(Class serviceClass);
+	public abstract Object getSingleService(Class serviceClass);
+	public abstract Object getSingleNamedService(String name,Class serviceClass);	
+}
+  <div class="exampleFooter">Listing 4) The ServiceAgentIntf Interface</div></div>
+<p>There are methods here that allow you to get the set of services, although expansion of the interface to allow full entry matching may be better. You will notice that the interface extends two other interfaces, Collaborative, and SensorAgent (which in turn extends Collaborative). Any interface in your agent that extends Collaborative, automatically makes the methods in that interface available for collaboration, in other words allows the methods in the interface to accept calls from other Agents. The sensor agent allows other agents to register for events that the agent will generate. For completeness, we'll add a snippet of the ServiceAgent (which implements ServiceAgentIntf) so you can see how things fit together.</p>
+<div class="example">package org.jini.projects.neon.service;
+.....
+public class ServiceAgent extends AbstractAgent implements ServiceDiscoveryListener, LocalAgent, SensorAgent, ServiceAgentIntf {
+	private Logger svcLog;
+	private List AgHostList = new ArrayList();
+	private LookupDiscoveryManager ldm;
+	private ServiceDiscoveryManager sdm;
+	private LookupCache cache;
+	private Map sensors = new HashMap();
+	
+	public ServiceAgent() {
+		this.name = "Services";
+		this.namespace = "neon";
+	}
+	
+	public boolean init() {
+		try {
+			svcLog = getAgentLogger();
+			
+			Configuration config = getAgentConfiguration();
+			String[] groups = (String[]) config.getEntry("serviceAgent", "sdmLookupGroups", String[].class);
+			ldm = new LookupDiscoveryManager(groups, null, null);
+			sdm = new ServiceDiscoveryManager(ldm, null);
+			cache = sdm.createLookupCache(new ServiceTemplate(null, null, null), null, this);
+			try {
+				wait(10*com.sun.jini.constants.TimeConstants.SECONDS);
+			} catch(Exception ex){
+				
+			}
+			
+		} catch (ConfigurationException e) {
+			....
+			return false;
+		}
+		return true;
+	}
+
+	public List getAgentHosts() {
+		AgHostList.clear();
+		ServiceItem[] services = cache.lookup(new AgentServiceFilter(), 50);
+		for (int i = 0; i < services.length; i++)
+			this.AgHostList.add(services[i]);
+		return AgHostList;
+	}
+	
+	public void serviceAdded(ServiceDiscoveryEvent event) {
+		ServiceItem si = event.getPostEventServiceItem();
+		svcLog.finer("Service Added: " + si.serviceID + "{ " + si.service.getClass().getName() + "}");
+		
+	}
+	public boolean addListener(AgentIdentity listener, SensorFilter filter) {
+		getAgentLogger().finest("Service Listener registered");
+		sensors.put(listener,null);
+		return true;
+	}
+	public void serviceRemoved(ServiceDiscoveryEvent event) {
+		try {
+			Object ob = event.getPreEventServiceItem().service;
+			Collection c = sensors.entrySet();
+			svcLog.finest("Service Removed: " + event.getPreEventServiceItem().serviceID);
+			svcLog.finest("Service removed is of type: " + ob.getClass().getName());
+			if (ob instanceof AgentService) {
+				for (Iterator iter = c.iterator(); iter.hasNext();) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					AgentIdentity id = (AgentIdentity) entry.getKey();
+					MessageHeader header = new MessageHeader();
+					EventMessage msg = new EventMessage(header, 
+										event.getPreEventServiceItem().serviceID,
+										0, "AgentServiceRemoved");
+					try {
+						context.sendMessage(id.getID(), msg);
+						svcLog.finest("Event message sent");
+					} catch (NoSuchAgentException e) {
+						// TODO Handle NoSuchAgentException
+						e.printStackTrace();
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}<div class="exampleFooter">Listing 5) The ServiceAgent (snippet)</div></div>
+<p>In the listing above, there are only a few methods shown, but there is a lot to be said about them. Firstly, the class declaration, shows that the agent not only extends ServiceAgentIntf (and SensorAgent), but also ServiceDiscoveryListener and LocalAgent. ServiceDiscoveryListener is used by the Jini ServicesDiscoveryManger, and LocalAgent is another marker interface (like Collaborative) that Neon uses to identify a utility or non-persisted agent; they only exists for the lifetime of the host, and will have to be recreated when the host is restarted. The point behind marking an interface as Collaborative, is that when you get an Agent reference from Neon, you cannot cast that reference to an interface that doesn't mark itself as Collaborative. So in this example you cannot get a ServiceAgent and then cast that to ServiceDiscoveryListener and start sending spoof events to the agent. The example also shows how to register for events with an agent and how to send event messages, although these may be hidden behind a helper class in the future</p>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</body>
+</html>

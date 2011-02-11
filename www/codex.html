@@ -1,0 +1,96 @@
+<strong></strong><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Codex</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</head>
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_blue.jpg">
+</div>
+<div class="undertitle"> 
+  <center>
+First Principles
+  </center> 
+</div> 
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+    
+<p>Listed below are some of the things that you need to be aware of before you begin to use the Neon framework and the API's </p>
+<h2>Identities,Namespaces and agent classes</h2>
+In Neon, every agent is given an identity - this identity is generated the first time it is accessed, and if the agent is persisted, will be the same throughout the lifecycle of the agent. The identity is based upon the IP address of the agent originator, or where the ID was first computed at, the current system time, and a Jini Uuid. Agent names and namespaces are used to 'group' agents together.Two agents of the same class will have two different identities, but <em>may</em> have the same name and namespace. Names are used as a key to a pool of agents, and namespaces are use to resolve naming conflicts. Essentially, when you request an agent with a particular name/namespace, you will get an agent in that particular group, if one exists, and if you request the 'same' agent (as in the same name and namespace) you may get agents with different identities handling your requests. However, if you maintain the object returned from getAgent, you will use the same agent (as in the same identity) over multiple calls. <br/>
+<br/>
+Neon can be given a rejection policy for checking agents with the same name/namespace as a existing name/namespace combination. There are effectively 3 levels. <br/>
+<ol>
+<li>The first level provides no checks against name/namespace copying.</li><li> The second level checks that although the implementing classes may be different, if each implements the same collanborative interfaces, it will allow the second class to register in the same group.</li><li>The third level, builds on the second one, and checks that the agents are the same implementing class, so if Agent A with name 'my.namespace.blah' of class 'Foo', tries to register with a Neon instance where agent B with the same name, but of class Bar, has already registered, the instance will not allow the agent to deploy.</li>
+</ol>
+The best way to remember the difference between names and identities is that names and namespaces point to a <em>category</em> of agents, whereas an identity is <em>unique</em> to a particular agent.
+<h2>Representation of an object as an Agent</h2>
+The easiest way to represent an object as an agent, is to extend &lt;org.jini.projects.neon.agents.AbstractAgent>, or any other non-abstract agent class. Alternatively, you can implement all the methods in &lt;org.jini.projects.neon.agents.Agent>. It may be possible to add agent code as a delegate and allow normal POJO's or classes with their own class hierarchy, to still be represented as an agent, even though the component class itself, is not 'aware of being an agent'.
+<h2>Agent State and Lifecycle</h2>
+An agent can be in one of a number of states at any given time during it's lifecycle. States are split into two groups, active and passive states. In an active state, an agent is running and is either doing work or is available for work. In a passive state, the agent is unable to do any work at that time, possibly because of system shutdown, transfer, or other concerns.<br/>
+<a name="lifecycle"></a>
+<table class="neontable" width="90%"  border="0" cellspacing="1px" cellpadding="2px" summary="The set of active and passive states of an agent">
+  <caption align="bottom">
+  Agent States
+  </caption>
+  <tr>
+    <th scope="col">Active States</th>
+    <th scope="col">Passive States</th>
+  </tr>
+  <tr>
+    <td><strong>Available</strong> - Running, but not processing </td>
+    <td><p><strong>Death</strong> - Agent has completed it's natural lifecycle</p>      </td>
+  </tr>
+  <tr>
+    <td><strong>Busy</strong> - Processing a method</td>
+    <td><strong>Dumped</strong> - State of an agent in a space when a host is shut down </td>
+  </tr>
+  <tr>
+    <td><p><strong>Locked</strong> - In a transaction, and will not be unlocked until transaction is completed</p>      </td>
+    <td><strong>Hibernated</strong> - Agents that cannot perform their processing at the current time, can be stored for a certain amount of time </td>
+  </tr>
+  <tr>
+    <td><strong>Attached</strong> - Attached for use only by the agent that has the reference until it is explicitly detached</td>
+    <td><strong>Savepoint</strong> - Savepoints can be used in the case of failure so that processing can be restarted at a certain point </td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td><strong>Transfer</strong> - Agents that are in the process of moving between hosts and re-establishing themselves elsewhere </td>
+  </tr>
+</table>
+
+<h3>The difference between the Active states</h3>
+<p>Although, it is easier to see what the differences are between the passive states, the active states require some more explanation. An agent is said to be available, if it is not currently processing a call. Conversely, if an agent is busy, it is currently processing (This is why when you run the Instance monitor that shows all the agents in your system, one of your MonitorAgents will always be shown to be busy - it is actually processing your request for instance data). However, when a method call is completed, the state of the agent reverts back to being Available. This may cause problems when you get an agent - Neon will return to you a proxy to any agent that matches your criteria and is showing as being Available when you ask for it.</p>
+<p>
+    This appears to be fairly stateless, which can be a good thing in a highly dynamic system - we don't want to lock an agent to a caller unnecessarily. That being said, there will be times when you want to ensure that you have exclusive access to an agent - you may not initially care <em>which</em> agent it is (see discussion on identities above) but once you actually get an agent, you want to use it without any other agents getting a reference to it.d</p>
+<p>
+    There are two ways of doing this. The first way is to explicitly 'attach' an agent to your agent. This is acheived by setting a parameter on context#getAgent - when Neon chooses the agent to return to you, it changes the state of the agent to indicate that it is attached to another agent, or process. When you have finished with the agent you <em>must</em> call context#detach with the agent proxy, which will allow Neon to enable other agents to use it. </p>
+<p>The second way is to use transactions. A transaction implicitly locks an agent whilst the transaction is active. All agents are capable of running under, and being locked by, a transaction(Unless the agent implements NonTransactionalResource). </p>
+<p>When a transaction is created, the calling agent is associated with a transaction id, and all calls it makes to other agents automatically have the transaction propagated to them, and are then said to be locked under the transaction. When this happens, the calling agent is said to have exclusive use of the agent that it is calling. In this way the transaction propagates out as agents call other agents. </p>
+<p>When a call to TransactionAgent#commit is sent, the TransactionAgent attempts to commit the transaction, when the transaction is complete (whether it commits or aborts) the transaction state is cleared down the propagation path, and the agents it effects are changed back to Available.</p>
+<h2>Lifecycle</h2>
+<p>An agent has three main lifecycle methods, beyond those for identity and state; init, stop and complete</p>
+<p>init() is called every time the agent is deployed; deployment takes place when the agent is first put onto the grid, when it is restarted after a crash (Dumped-&gt;Available) or (Savepoint-&gt;Available) or when it otherwise moves from one system to another (Transfer-&gt;Available). Stop() is called whenever the agent has to prepare to be moved out of process and the call to complete() is only issued when the agent has finished it's processing and is therefore no longer needed, or needs to be decommissioned for some reason. </p>
+<p>If you require an agent to start some processing as soon as it is deployed, i.e. it is not simply waiting for other agents to invoke methods on it, implement the java.lang.Runnable interface (as you would for other objects that is to start it's own thread of execution) </p>
+<p>Now that the basic fundamentals are out of the way, you can start to develop your agents.</a></p>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div> 
+</div>
+</div>
+</body>
+</html>

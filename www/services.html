@@ -1,0 +1,88 @@
+
+<html>
+<head>
+<title>:: Neon :: Meta</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+<script language="javascript" type="text/javascript" src="neon.js"></script></HEAD>
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_red.jpg">
+</div><div class="undertitle">
+<center>
+  Service Exporting
+</center>
+</div>
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+
+<p>Agents in Neon, can be exposed as services</p>
+Similarly, as agents can be differentiated using meta information, so can Agent services and Domains. In the case of the Agent Service, meta information can be appended as Lookup attributes as happens with most Jini services, but can also be used in a similar context to how it is used with domains.</p>
+<p>With domains, meta information is used when evaluating constraints when (re-)deploying agents into the partition.</p>
+<h2>Dynamic Meta-Information</h2>
+<p>If we take entries as they are used in Lookup Attributes, generally a service will send a set of attributes to be stored by the LUS, as service meta-data (i.e. data about the service; a Name, a location, etc.). In many cases, this data is fairly static, although this does not have to be so, but because the attributes are 'posted' to the LUS, meta-data that changes frequently is often not a good choice for a lookup attribute. Within Neon, meta-information for domains and agents are held on the same system as they are evaluated on - this allows for evaluation of entries based on the most up-to-date values.</p>
+
+<p>Defining Meta Information</p>
+<p>Meta information is done by returning an array of Entries from getMetaInformation. Because of this, an agent has the ability to change it's own meta information at anytime, which then affects subsequent lookups for the agent. Agent State, to some degree, is meta-information, but because it is used in a number of areas, it has it's own methods and objects we'll discuss that further on.</p>
+<p>Meta data can be comprised of any number of entries, including any object that extends Meta - Meta in turn extends AbstractEntry. Any object that implements Meta will have it's <code>evaluate()</code> method called, otherwise normal entry matching occurs. The evaluate method, allows for finer consideration of entry data, above that supported by equals. Entries are dependent upon a template either specifying 'exact match' or 'don't care' semantics . This is extremely useful in Lookup Services, where the values can be compared exactly, and where deciding an item is </p>
+<h2>Agents as Services</h2>
+<p>There are two ways to expose agents as services, as Web Services and Jini services. Both are controlled through the @ServiceBinding attribute.</p>
+<h3>Web Service Agents</h3>
+<p>Agents can be exposed as a Web Service using the @ServiceBinding(type=&quot;WS&quot;) attribute on the agent class. Neon uses Apache CXF to support Webservice creation. As such, the first interface that your agent class implements is the only interface that will be exposed through your WSDL. For example, Neon's monitor Agent, that provides Neon admin front-end,exposes a Web interface using the following class header</p>
+<p><em>public class MonitorAgentImpl extends AbstractAgent implements MonitorAgent,LocalAgent</em><br/>The key thing to note here is that <em>MonitorAgent</em> is the first interface.</p>
+<p>Also, all Web services are exported on the same port, this will change in the next release. The port is controlled by the <strong>webServicePort</strong> parameter in <strong>neon.config</strong></p>
+<h3>Jini Service Agents</h3>
+<p>To export an agent as a Jini service, takes a little bit more work.
+  You must add 3 separate annotations to your class header</p>
+<p>@Exportable<br>
+  @ServiceBinding(type=&quot;Jini&quot;) <br>
+  @Service(containerControlled = true) </p>
+<p>You need @Exportable to ensure that smart proxies are properly generated for your object. The @ServiceBinding is used to tell Neon to start the binding process when your agent is loaded, and the @Service annotation is there to generate the required service classes, and configurations. Neon uses the Glyph annotations to do all of this.</p>
+<p>What this means is that you need to build your agents in a particular way. Specifically, you have to use certain ant tasks as shown below</p>
+<div class="example">&lt;path id="glyphFactory">
+            &lt;pathelement location="${glyph}" />
+            &lt;fileset dir="${jini.home.lib}">
+                &lt;include name="tools.jar" />
+            &lt;/fileset>
+        &lt;/path>
+&lt;apt factorypathref="glyphFactory" destdir="${build}/samples" factory="org.jini.glyph.GlyphFactory" srcdir="${samples}" preprocessdir=".apt_src" fork="true" classpathref="project.classpath">
+            &lt;option name="jiniRoot" value="${jini.home.lib}" />
+            &lt;option name="scriptClasspath" value="${scriptClassPath}" />
+            &lt;option name="projectName" value="neon-samples-gen" />
+            &lt;option name="dl_port" value="8086" />
+            &lt;option name="dl_path" value="lib" />
+            &lt;option name="dl_file" value="neon-samples-gen-dl.jar" />
+            &lt;option name="groupCodebase" value="http://localhost:8086/lib/group-dl.jar" />
+            &lt;option name="classdepBuildFile" value="${classdepbuildfile}" />
+            &lt;option name="classdepBuildRoot" value="${build}/samples" />
+            &lt;classpath refid="project.classpath" />
+
+            &lt;include name="**/*.java" />
+
+        &lt;/apt>
+        &lt;ant antfile="${classdepbuildfile}" target="buildclassdep" inheritrefs="true" />
+        &lt;delete file="${classdepbuildfile}" failonerror="false" />
+        &lt;copy todir="${dist}/conf/expdir" failonerror="false">
+                    &lt;fileset dir="${build}/samples/conf/expdir">
+                        &lt;include name="**" />
+                    &lt;/fileset>
+                &lt;/copy><div class="exampleFooter">Listing 1) Ant snippet to generate service code through apt<br/>and Glyph annotations</div></div>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</body>
+
+</html>

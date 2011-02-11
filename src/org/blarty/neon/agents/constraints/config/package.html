@@ -1,0 +1,22 @@
+<html><head>
+	<title></title>
+</head><body>
+Defines a set of constraints that are model through the use of a Jini configuration file definition.<br/>
+A Sample Configuration constraints component is shown below
+<pre>
+org.jini.projects.neon.agents.restrictions{
+	domain="datalayer";
+	meta = "hasWord, hasExcel";
+	requiredClasses = new String[]{
+			"com.foo.bar.wordintegration.WordApp",
+			"com.foo.bar.excelintegration.ExcelApp"
+		};
+	requiredInstances = new String[]{
+		"neon.ServiceAgent"
+	};
+	osArch="x86";
+	osFamily="Windows XP"
+	osVersion="5.1";
+	memoryMinimumMB="10";
+}</pre>
+</body></html>

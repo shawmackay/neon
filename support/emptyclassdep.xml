@@ -1,0 +1,5 @@
+<project name="buildclassdep" default = "buildclassdep">
+<target name="buildclassdep">
+<echo message="No classdep created for this build"/>
+</target>
+</project>

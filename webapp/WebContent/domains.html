@@ -1,0 +1,120 @@
+
+<html>
+	<head>
+		<title>Welcome</title>
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</head>
+<body>
+
+	<script language="javascript" type="text/javascript" src="scripts/testlinks.js"></script>	
+
+<strong></strong>
+
+
+	<link xmlns="http://www.w3.org/1999/xhtml" href="tree.css" rel="stylesheet" type="text/css"></link>
+<link xmlns="http://www.w3.org/1999/xhtml" href="neon.css" rel="stylesheet" type="text/css"></link>
+<body xmlns="http://www.w3.org/1999/xhtml"><script>
+		
+    
+    function expandBranch(id){
+        var div = document.getElementById('expand'+id);
+         var imgdiv=document.getElementById('bullet'+id);
+        if(div.style.display=='none'){
+        div.style.display="block";
+        div.style.visibility='visible';
+        imgdiv.src="images/bullet_toggle_minus.png"
+        } else {
+        div.style.display="none";
+        div.style.visibility='hidden';
+        imgdiv.src="images/bullet_toggle_plus.png"
+        }
+       
+        
+    }
+				
+				var currentTree;
+				
+				function showTree(id){
+        var div = document.getElementById('tree'+id);
+				var olddiv = document.getElementById('tree'+currentTree);
+         	
+				if(id!=currentTree){
+				if(currentTree!=null){
+				olddiv.style.display='none';
+				olddiv.style.visibility='hidden';
+				var ldivid = 'tab_l_id_' +id;
+				
+				
+				
+				
+				var ldiv = document.getElementById('tab_l_id_' +currentTree);
+				ldiv.setAttribute("class", "tab_l_clear");
+				ldiv.setAttribute("className", "tab_l_clear");
+				
+				ldiv = document.getElementById('tab_c_id_' +currentTree);
+				ldiv.setAttribute("class", "tab_c_clear");
+				ldiv.setAttribute("className", "tab_c_clear");
+				
+				ldiv = document.getElementById('tab_r_id_' +currentTree);
+				ldiv.setAttribute("class", "tab_r_clear");
+				ldiv.setAttribute("className", "tab_r_clear");
+				
+				}
+				}
+				var ldiv = document.getElementById('tab_l_id_' +id);
+				ldiv.setAttribute("class", "tab_l_select");
+				ldiv.setAttribute("className", "tab_l_select");
+				
+				ldiv = document.getElementById('tab_c_id_' +id);
+				ldiv.setAttribute("class", "tab_c_select");
+				ldiv.setAttribute("className", "tab_c_select");
+				
+				ldiv = document.getElementById('tab_r_id_' +id);
+				ldiv.setAttribute("class", "tab_r_select");
+				ldiv.setAttribute("className", "tab_r_select");
+        div.style.display="block";
+        div.style.visibility='visible';
+				currentTree = id;
+         
+     
+        
+    }
+    
+function showLink(id){
+        var div = document.getElementById(id);
+         var filldiv = document.getElementById('agentInfo');
+				
+        filldiv.innerHTML = div.innerHTML;
+        div = document.getElementById(id);
+        div.style.display="block";
+        div.style.visibility='visible';
+        
+    }				
+				
+    
+	</script><div id="mainbody"><img src="images/imageEffectsBelow_neonemboss_small_blue.png" alt="" id="id3" style="border: none; height: 152px; left: 16px; opacity: 1.00; position: fixed; top: 4px; width: 224px; z-index: 1; "></img><img src="images/neonemboss_small_blue.jpg" alt="" style="border: none; height: 100px; left: 24px; opacity: 1.00; position: fixed; top: 12px; width: 200px; z-index: 2; "></img><img src="images/imageEffectsAbove_neonemboss_small_blue.png" alt="" id="id4" style="border: none; height: 152px; left: 16px; opacity: 1.00; position: fixed; top: 4px; width: 224px; z-index: 1; "></img><span>
+         <div class="btn_l_aqua"></div>
+         <div class="btn_c_aqua">
+            <div style="margin-top:13px;"><font size="+1">Monitor Results</font></div>
+         </div>
+         <div class="btn_r_aqua"></div></span><div class="floatClear"></div>
+      <h2>Domains</h2>
+      <h3>Agent Retrieval</h3><span>
+         <div class="btn_l_clear"></div>
+         <div class="btn_c_clear">
+            <div style="margin-top:13px;"><font size="+1">Domain: testDomain</font></div>
+         </div>
+         <div class="btn_r_clear"></div></span><div class="floatClear"></div>
+      <div style="left:40px;margin-left:40px;">
+         <h2>Number of agents Registered in this domain: 5</h2><span class="neonback4"><font size="+1"> Can request agents from these domains:</font></span><br></br><span style="left:40px;margin-left:40px;padding-top:12px;top:12px;">global</span><br></br><span class="neonback4"><font size="+1"> Allow these domains to request agents:</font></span><br></br></div><br></br><span>
+         <div class="btn_l_clear"></div>
+         <div class="btn_c_clear">
+            <div style="margin-top:13px;"><font size="+1">Domain: Global</font></div>
+         </div>
+         <div class="btn_r_clear"></div></span><div class="floatClear"></div>
+      <div style="left:40px;margin-left:40px;">
+         <h2>Number of agents Registered in this domain: 45</h2><span class="neonback4"><font size="+1"> Can request agents from these domains:</font></span><br></br><span class="neonback4"><font size="+1"> Allow these domains to request agents:</font></span><br></br><span style="left:40px;margin-left:40px;padding-top:12px;top:12px;">testDomain</span><br></br></div><br></br></div>
+</body>
+	</body>
+</html>
+

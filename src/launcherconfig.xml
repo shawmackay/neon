@@ -1,0 +1,25 @@
+<launcherconfig>
+	<general>
+		<appname>Neon</appname>
+		<licenseFile>license.txt</licenseFile>
+		<readmeFile>readme.txt</readmeFile>
+		<directoryName>Neon0.2</directoryName>
+		<theme>white</theme>
+		<prerequisites>instlib/prerequisites.html</prerequisites>
+		<image>/instlib/logo</image>
+		<policy default="conf/policy.all"/>
+		<config default="conf/neon.config"/>	
+		<codebase value="lib-dl/neon-dl.jar,lib-dl/neon-gen-dl.jar,lib-dl/zenith_mesgsvc-dl.jar,lib-dl/zenith_router-dl.jar,lib-dl/zenith_broker-dl.jar,lib-dl/neon-samples-gen-dl.jar"/>
+		<finishreadmefile>starting.html</finishreadmefile>
+		<startfile name="Neon Service" command="runneon"/>
+		<startfile name="Install web-app" command="install-webapp"/>		
+		<script-var name="FileLogLevel" comment="Level of logging to be directed files" default="FINER"/>
+		<script-var name="ConsoleLogLevel" comment="Level of logging to be directed to Console" default="INFO"/>		
+		<script-var name="GROUP" comment="Name of Jini Group to use in default config" default="neonGroup"/>
+		<script-var name="useJetty" comment="Start an embedded version of Jetty" default = "Boolean.TRUE"/>
+		<script-var name="httpdPort" comment="Port to run Jetty on" default="8083"/>
+		<script-var name="webServicePort" comment="Port to export Web Services on" default="9001"/>		
+		<script-var name="startupfile" comment="Location of file that describes your domain setup" default="conf/startup.xml"/>
+		<script-var name="spaceName" comment="Name of javaspace that where Neon stores/recovers it's agents" default="AgentSpace"/>		
+	</general>
+</launcherconfig>

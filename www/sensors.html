@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: Sensors</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</head>
+
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div><div class="undertitle">
+<center>Reactive agents and sensors</center>
+</div>
+
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+Given that all agents can be collaborative (if they want to be), meaning that they can be called by other agents, there is also a way to be notified when something occurs, without the notifier implicitly knowing about the agent that is to be called. This follows the classic Observer pattern. There are three steps to building reactive agents
+<ol>
+<li>Create an agent that allows other entities(not necessarily agents) to register interest in what it is doing - <i>the Sensor</i></li>
+<li>Create an object that provides a way for the sensor to notify it when the sensor is triggered - <i>the Listener</i></li>
+<li>Create an object that will be used to only inform the listener of items of interest - <i>the Filter</i></li>
+</ol>
+<p>In order to show you the process of creating sensors, we'll use classes shipped with the Neon distribution -<em> TimeSensor</em></p>
+<h2>Creating the Sensor</h2>
+<p>All you have to do is create an agent in the normal way (perhaps extending AbstractAgent) and add <code>SensorAgent</code> to your implements clause. Then implement the required methods. Most of these methods accept a SensorListener. SensorAgent extends Sensor. For example, this is part of the source code for the TimeSensor</p>
+<p>Because Neon allows for agents to move during their lifecycle, maintaining a reference to an object could cause problems should that agent move at some point. Thus, registering a sensor requires registering your identity, rather than the listener, which will then be used by the messaging system to locate your listening agent when an event is triggered</p>
+<div class="example">
+public boolean addListener(AgentIdentity agent, SensorFilter filter){
+	MessageHeader header = currentMessage.getHeader();
+		header.getReplyAddress();
+		System.out.println("reply Address is" + header.getReplyAddress());
+		sensors.put(agent.getID(), filter);
+		return true;
+	}
+	
+	public void notifyListeners(long time){
+		for(Iterator iter = sensors.entrySet().iterator();iter.hasNext();){
+			Map.Entry sensor = (Map.Entry) iter.next();
+			SensorFilter filter = (SensorFilter) sensor.getValue();
+			Uuid address = (Uuid) sensor.getKey();			
+			Date datetime = new Date(time);			
+			if(filter.accept(datetime)){
+				AgentContext ctx = getAgentContext();
+				MessageHeader header = new MessageHeader();
+				EventMessage msg = new EventMessage(header, datetime, 0, "TimeChanged");
+				try {
+					ctx.sendMessage(address,msg);
+				} catch (NoSuchAgentException nsaex){
+					System.err.println(nsaex.getMessage());
+					nsaex.printStackTrace();
+				}
+			}
+		}
+	}
+</div>
+This example shows, at quite a low level, how to dispatch events to listeners. TimeSensor, calls notifyListeners() every second. The Sensor maintains a list of registrations - essentially an address associated with a filter. The filter for each registration is called to see if the filter accepts the object that will be sent to the agent - this reduces unneccessary dispatching, and in the case of remote processes, network traffic. If the filter accepts the object, we create an event message and dispatch that to the address given in the registration.
+<h2>Creating the Listener </h2>
+<p>In the agent that wants to be informed of events (the <em>Observer</em>), you will need to add 'implements SensorListener'. This is a global listener, all sensors that you register against will ultimately deliver their messages to this method. If you need to filter out what sensors have been fired and then route the event processing accordingly then this will have to be part of your agent implementation.</p>
+<div class="example">
+public boolean init() {
+		try {
+			AgentContext ctx = getAgentContext();
+			if (!registered) {
+				SensorAgent sens = (SensorAgent) ctx.getAgent("neon.test.TimeSensor");
+				sens.addListener(this.getIdentity(), new TimeFilter(TimeFilter.EVERY | TimeFilter.BOUNDARY, 0, 0, 15));
+			}
+			return true;
+		} catch (Exception ex) {
+			System.err.println("Caught Exception: " + ex.getClass().getName() + "; Msg: " + ex.getMessage());
+			ex.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * sensorTriggered
+	 * 
+	 * @param aString
+	 * @param aObject
+	 */
+	public void sensorTriggered(String aString, Object aObject) {
+		getAgentLogger().info("Sensor Triggered with value:  " + aObject.toString());
+		try {
+			ServiceAgentIntf svcAgent = (ServiceAgentIntf) context.getAgent("neon.Services");
+			List l = svcAgent.getAgentHosts();
+			Random r = new Random(System.currentTimeMillis());
+			if (l.size() > 0) {
+				ServiceItem item = (ServiceItem) l.get(r.nextInt(l.size()));
+				if (!item.serviceID.equals(context.getAgentServiceID())) {
+					TransferIntf transfer = (TransferIntf) context.getAgent("neon.Transfer");
+					getAgentLogger().info("Transferring");
+					transfer.transferAgentTo(this, (AgentService) item.service);
+				} else
+					getAgentLogger().info("Staying in current partition");
+			}
+		} catch (NoSuchAgentException e) {
+			// TODO Handle NoSuchAgentException
+			e.printStackTrace();
+		}
+</div>
+This agent registers against the sensor (<em>init() method</em>) and when the event is received we obtain the list of running agent services, from the services agent, and we randomly move to another host, using the transfer agent
+<h2>Creating a Filter </h2>
+<p>Filters are transmitted to sensors when the Observer register interest in the events that the Sensor agent is producing. They are primarily designed to filter out unwanted events at the sensor, rather using time and bandwidth transmitting messages that are going to be ignored. The TimeFilter class, is actually quite involved, allowing you to specify exact times, offsets from time of registration, and recurring events, so the full code is not displayed. However, the most important method is <code>boolean accept(Object)</code> from SensorFilter.</p>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</body>
+</html>

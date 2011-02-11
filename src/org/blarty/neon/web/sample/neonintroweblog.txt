@@ -1,0 +1,103 @@
+Introduction to Neon
+
+So here's my pitch. I've been working on a grid system using Jini, for about 12-18 months, and now I'm nearly ready to release it as a Jini.org project. This weblog entry serves as a bit of an introduction to Neon's features and capabilities.
+
+Neon is a framework for hosting mobile, collaborative objects. These objects are modeled as agents; but not agents in the JMX way, but mobile autonomous agents.
+<br>
+Here are the main features of Neon, and I'll go through them each in turn<br>
+<ul>
+<li>Deploy your business objects into Neon</li>
+<li>Multiple agent types</li>
+<li>Partitioning and Domains</li>
+<li>Deployment Suitability and runtime configurations</li>
+<li>Manages life cycle of agents.</li>
+<li>Provides a grid 'fabric' to your network</li>
+<li>Provides automatic recovery, migration and agent transfer facilities</li>
+<li>Simplified Jini Distributed transaction support</li>
+<li>Secure calling on context-provided agents</li>
+<li>Run your Tomcat instance internally, with access to the grid.</li>
+</ul>
+<br>
+<h3>Deploy you business objects into Neon</h3>
+By modeling core parts of  your logic as agents, you can deploy your code into the system, and have it managed by Neon. You can allow the various different parts of your application to collaborate with each other through their Collaborative interfaces, even though they may exist on different machines, or even change which machine they are on between one call and the next.<br>
+<br>
+<h3>Multiple Agent types</h3>
+Neon provides a number of core agent interfaces, that you can implement, or that mark out an agent in a particular way. By 'tagging' your agents with different interfaces, and if required implementing the methods, your agent can react to Neon in different ways.<br>
+<br>
+The main agent types that we'll discuss here are:<br>
+<ul>
+<li>Agent and AbstractAgent</li>
+<li>LocalAgent</li>
+<li>NonContinuousAgent</li>
+<li>SensorAgent</li>
+<li>TransactionalAgent</li>
+</ul>
+The Agent interface is the interface that makes your class an Agent in the eyes of Neon, all agents must implement this interface, and unfortunately there are a substantial amount of methods that need to be implemented; many of these deal with lifecycle, identity and configuration. Most of the time, however, you can probably make do with extending AbstractAgent. If you extend Abstract Agent, you will have to only implement two methods, init() and start().
+
+LocalAgent marks an agent as being locally bound and therefore not persistable at shutdown time, man of the utility agents such as ServiceAgent are Local, and new instances are created through the normal bootstrapping procedure.
+
+NonContinuousAgent is there to mark your agents as departing from the normal lifecycle of agents. In general, an Agent calls init(), then start(), and even if start() returns straightaway, the agent remains registered and maintained by the system, even though it's own execution thread has completed, i.e. The agent is waiting to be told to do something or to be notified of something. So in effect all agents are temporally continuous, they will exist indefinitely, and if checkpointed regularly will exist even beyond complete system failure (such as somebody pulling the power lead), except in two cases i) Local agent, these agents are designed, as noted above, to be run for the duration of the container, and no longer, and ii) NonContinuousAgents are deregistered and removed from the system once start() has completed.
+
+Sensor Agents allow other agents to have listeners registered on them and will fire EventMessages to the registered parties, for instance, if a File arrives in a directory that is being polled by an agent, making this Agent a sensor will allow it to tell other agents about it, thus decoupling the processing of the file, from the recognition that the file has arrived.
+
+TransactionalAgents add two-phase commit semantics to your agent, thus you need to implement commit(), abort() and prepare(). Transactions within Neon are explained more fully below.
+<br>
+<h3>Partitioning and Domains</h3>
+Neon provides logical partitioning of the system (but not a more rigid partitioning via different classloaders, for example; Partitions do not set their own classloaders). A partition is defined at startup, but as Neon makes its way towards a 1.0 release, partition management will be required, and even now is a fairly high priority. Partitions are logical groupings of agents under a single category, how you define these categories is up to you, they could be based on different applications you run (Orde Processing), your departments (Accounts, HR), or even different needs of your application (Persistence, Legacy Integration,etc). Partitions can talk to each other if they are configured to do so. Each partition in a Neon instance (or host) must have a unique name, although the same name may be used in different instances, all the partitions across the network that share the same name define a Domain.<br>
+<br>
+<h3>Deployment Suitability</h3>
+Before sending an agent into the system at runtime, you may want to specify certain criteria about the instance that need to be met in order to deploy the agent into it. This is not just about maintaining a level of service for the agent, but also about limiting the effect of runtime errors that may occur such as ClassNotFoundException, and in the case of deployment time considerations such as COM integration or native libraries, ensuring that the application you want is actually available on that machine etc. Agents can specify some of their classes that need to be available to the instance, what operating system the agent may need to run on, and free memory requirements etc. Agents that don't meet their constraints don't get deployed. 
+<br>Each agent is also capable of having a Jini configuration attached to it that it can then access at runtime, this can be anything from a URL, to a configuration file stored with in a download jar.<br>
+<br>
+<h3>Manages lifecycle</h3>
+Neon can put agents into different states based upon what is happening to them  or user defined policies, or whether the agent is in a transaction, etc. There are a number of Agent states, from Busy or Locked right up to Hibernated and Death. Different states will effect your ability to collaborate with an agent or even effect the physical location of an agent at that point in time.<br>
+<br>
+<h3>Provides a grid fabric</h3>
+All Neon instances in a group can work together. The secret is in how the methods on other agents are called from your agent. Neon forgoes the normal view of using a conventional callstack for calling from one object to another, and instead replaces it with a set of dynamic proxies, and a messaging system called Zenith. Each message bus is dynamic allowing channels to be added and removed at runtime, as agents join and leave the partition. On the network is a message broker that is informed of each addition and removal in the channel set by each message bus, this broker, in turn, tells each and every other Neon instance in the group about the channel, and which message bus service holds that channel. Thus when Neon needs to call out of it's process, it simply looks up in its own table and looks for the channel name it wants, and picks a corresponding service id to route the message through.<br>
+<br>
+<h3>Recovery, Migration and Transfer</h3>
+As alluded to above, Neon is able to transfer objects from one instance to another, however, there is another time when agents need to move – when the instance is being shutdown. When you Ctrl-C an instance of Neon, shutdown hooks are called, and all Non-local agents are stopped and persisted to a JavaSpace, when the service is deregistered from the Jini group, an agent is called on every other Neon instance, this agent is the RecoveryAgent. The RecoveryAgent is woken up whenever ans AgentService is removed, when this happens, it starts to try to deploy and restart any agents that were persisted during the shutdown phase. In the case, where upon restarting the shutdown instance, agents that were stored into the space are still there, these will be redeployed (subject to constraints, of course)<br>
+<br>
+<h3>Simplified Distributed Transaction support</h3>
+I'll explain this with a bit of an example.<br>
+Normal Jini transaction
+<pre>try{
+	JavaSpace mySpace = (JavaSpace) regs[0].lookup(salesJSpaceTmp);
+	TransactionManager txnMgr = (TransactionManager) regs[0].lookup(txnMgrTmp);
+	Transaction.Created txf = TransactionFactory.create(txnMgr, 20000);
+	Transaction tx = txf.transaction;
+	lrm.renewFor(txf.lease, Lease.FOREVER, null);
+	EmployeeEntry template = new EmployeeEntry("Bottomless Pete", "Natures cruelest mistake");
+	mySpace.write(entry, tx, 3*com.sun.jini.constants.TimeConstants.MINUTES);
+	tx.commit();
+} catch (Exception ex){
+	System.err.println("Caught Exception: "+ ex.getClass().getName() + "; Msg: " + ex.getMessage());
+	ex.printStackTrace();
+}</pre>
+With Neon we can use two agents to simplify this – TransactionAgent and JavaSpaceOps<br/>
+<pre>
+try{
+	TransactionIntf txn = (TransactionIntf) context.getAgent("neon.Transaction");
+	txn.createTransaction();
+	JavaSpaceOps ops = (JavaSpaceOps) context.getAgent("JavaSpaceOps");
+	EmployeeEntry entr = new EmployeeEntry("Captain McCallister", "G'arr");
+	ops.write(entr, 3*com.sun.jini.constants.TimeConstants.MINUTES);			txn.commit();
+}catch(Exception ex){
+	System.err.println("Caught Exception: "+ ex.getClass().getName() + "; Msg: " + ex.getMessage());
+	ex.printStackTrace();
+}
+</pre>
+The first thing you'll notice is that we ask the TransactionAgent to create our transaction, however, we don't actually reference it, and then we don;t use it to pass to the JavaSpaceOps agent – but things are still written under a distributed transaction. Neon hides a lot of transaction processing, and assigns it's own txnID to the Jini Distributed Transaction Uuid, and it is possible to build agents that have 2PC methods that are called when the transaction is actioned. Agents that require access to the real distributed transaction, like JavaSpaceOps, can do so and then use that transaction to pass on to another service. All agents are capable of running under a Transaction (there is an exception - have your class implement NonTransactionalResource), but may not react to the transaction semantics (commit, abort, etc). Any agent running under a transaction will have it's state changed to LOCKED. Transactions are automatically propagated between agents and instances of Neon.<br>
+<br>
+<h3>Secure calling on Agents</h3>
+When you call context.getAgent(), you don't actually receive a reference to the agent, you actually receive a dynamic proxy that dispatches method calls as messages, this dynamic proxy only implements any interfaces that you mark as being Collaborative, but importantly, it does not choose to implement the Agent interface, thus you cannot do the following<br/>
+<pre>
+Agent agent = (Agent) context.getAgent("my.important.business.agent");
+agent.setState(AgentState.LOCKED) </pre>
+or<pre>
+agent.complete();
+</pre>
+<h3>Run your Tomcat instance internally</h3>
+Neon is capable of taking your existing Tomcat installation and running it internally with the Neon process. Once this is done you can access the Neon system and obtain agents from servlets and JSP's. Also Neon provides a RenderAgent as one of it's Stock agents. Render Agent allows agents to register a presentation (currently XSL stylesheets) for themselves, and the Render Agent can then call back on the agent when required to get any data that it wishes to present. The render agent then runs the data against XSL stylesheet and can then return that to the caller-Neon comes with a very small JSP that calls render on a provided agent ID and shows the results back to the browser. An advantage of this approach is that this kind of rendering can utilise the grid and potentially render pages on different hosts, alleviating pressure on the Tomcat instance.<br>
+<br>
+Well that's the introduction out of the way, once I've got the code and binaries available, and out there for people to have a look at, I hope to blog more on what Neon can do. Of course Neon is not going to do everything for everyone - being a framework, certain compromises have to be made and therefore, like every other framework, it's not a perfect fit for all scenarios – but I hope some people like the sound of it and at least have a look. Most updates will appear on the Neon project page – <a href="neon.jini.org">neon.jini.org</>.<br>

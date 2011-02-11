@@ -1,0 +1,98 @@
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>:: Neon :: Architecture Introduction</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.2  (Linux)">
+	<META NAME="CREATED" CONTENT="20050307;11371400">
+	<META NAME="CHANGED" CONTENT="20050307;11371400">
+	
+
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+
+
+</HEAD>
+
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_green.jpg">
+</div><div class="undertitle">
+
+<center>Introduction</center>
+
+</div>
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel">
+
+<P>Neon is a framework for hosting objects. The objects are modeled
+as agents, that can be deployed directly into a Neon instance.</P>
+<H2>The architecture</H2>
+<P>Neon is essentially a grid system, allowing multiple components
+spread across the network to knit together to provide your
+application. Neon provides <I>partitions</I> which allow separation
+of object sets for  deployment or management purposes. Each
+instance of Neon can contain multiple partitions, but each one must
+have a unique name; all partitions with the same name across all
+instances of Neon on the same Jini group, are collectively called a
+<I>Domain</I><SPAN STYLE="font-style: normal">. Although a partition
+is restricted to a single host, the terms </SPAN><I>Domain</I><SPAN STYLE="font-style: normal">
+and </SPAN><I>Partition</I><SPAN STYLE="font-style: normal"> are
+roughly equivalent, and where explanation applies only to one,
+indication will be shown where necessary.</SPAN></P>
+<P STYLE="margin-top: 0.21cm"><IMG SRC="hostdomain.png" NAME="Graphic1" ALIGN=LEFT BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Fig
+1) Relationship between instances, domains and partitions</I></FONT></P>
+<P STYLE="font-style: normal">In order, to deploy your objects into
+Neon, you must model <I>first-tier objects </I>as agents. A
+First-tier object, is the core object that is exposed to both Neon
+and other agents; as such Neon provides a set of interfaces and
+abstract classes to help you build agents. As part of these
+interfaces, Neon provides the means to allow your components to
+interact with each other and for one component to expose the
+functionality it will allow other agents to use; this is termed
+<I>Collaboration.</I> Collaboration between components can occur not
+only between agents in the same Partition (i.e. the same host) , but
+also between agents in various Partitions across the Domain, and even
+between agent on different hosts in different Domains. To support
+this, Neon uses a messaging system called <I>Zenith</I>; this
+provides all the required routing capabilities, and provides numerous
+messaging components to manage interactions between endpoints on the
+messaging system; in Neon's case these will be agent endpoints, but
+you can add other endpoints into Zenith, and call them from your
+agents.</P>
+<P STYLE="font-style: normal">Neon also provides support for
+transactions and all agents are capable of carrying a transaction,
+and with the appropriate interface support an agent can also react to
+2PC or be able to access the Jini transaction in order to send on to
+another Jini service. Transactions are also automatically propagated
+across partitions and domains.</P>
+<P STYLE="font-style: normal">Internal Tomcat integration is also
+available within Neon, and should not interfere with any existing
+webapps that you have deployed. An instance can be configured to
+automatically start Tomcat within the instance VM, and provide access
+to the Neon core. This allows you to obtain agents and interact with
+them, and provide a web front end to your grid application. Also,
+agents can provide a <I>presentable format</I> of their data when
+requested, which can then be rendered via a RenderAgent; this could
+render your data as XML, HTML, raw text, or if you had the required
+software PDF, so building autonomous agents that can generate reports
+is very easy.</P>
+<P STYLE="margin-top: 0.21cm"><IMG SRC="neonwebinter.png" NAME="Graphic2" ALIGN=LEFT  BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Fig
+2) Tomcat Integration and Inter-node communication</I></FONT></P>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</BODY>
+</HTML>

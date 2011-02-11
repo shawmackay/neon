@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Untitled Document</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="JavaScript" type="text/JavaScript">
+
+// * Dependencies * 
+// this function requires the following snippets:
+// JavaScript/readable_MM_functions/findObj
+// JavaScript/readable_MM_functions/showHideLayers
+// JavaScript/events/getMouseLoc
+function toggleSize(theLayer){
+	theLayer.height=40;
+	theLayer.width=40;
+}
+
+function moveLayerToMouseLoc(theLayer, offsetH, offsetV)
+{
+  var obj;
+  if ((findObj(theLayer))!=null)
+  {
+    if (document.layers)  //NS
+    {
+      document.onMouseMove = getMouseLoc;
+      obj = document.layers[theLayer];
+      obj.left = mLoc.x +offsetH;
+      obj.top  = mLoc.y +offsetV;
+    }
+    else if (document.all)//IE
+    {
+      getMouseLoc();
+      obj = document.all[theLayer].style;
+      obj.pixelLeft = mLoc.x +offsetH;
+      obj.pixelTop  = mLoc.y +offsetV;
+    }
+    showHideLayers(theLayer,'','show');
+  }
+}
+// get mouse location
+function Point(x,y) {  this.x = x; this.y = y; }
+mLoc = new Point(-500,-500);
+function getMouseLoc(e)
+{
+  if(!document.all)  //NS
+  {
+    mLoc.x = e.pageX;
+    mLoc.y = e.pageY;
+  }
+  else               //IE
+  {
+    mLoc.x = event.x + document.body.scrollLeft;
+    mLoc.y = event.y + document.body.scrollTop;
+  }
+  return true;
+}
+//NS init:
+if(document.layers){ document.captureEvents(Event.MOUSEMOVE); document.onMouseMove = getMouseLoc; }
+
+
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+</head>
+
+<body>
+<div id="Layer1" style="background-color:blue;position:absolute; width:200px; height:115px; z-index:1"></div>
+<br/><br/><br/><br/><br/><br/><br/>
+<a href="" style="background-color:red;" onClick="toggleSize(Layer1)">Click me</a>
+</body>
+</html>

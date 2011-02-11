@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>:: Neon :: FAQ</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</head>
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<!--<img src="images/neonembossmed_cyan.jpg"><img src="images/headerfaq_med.jpg">-->
+<img src="images/neonembossmed_purple.jpg"><img src="images/headerfaq_med.jpg">
+</div><div class="undertitle">
+
+<center>Frequently Asked Questions</center>
+
+</div>
+
+<div class="paneldisplayLarge"> 
+    <div class="innerLGPanel"> 
+<ul>
+<li><a href="#webinar">Webinar questions</a></li>
+<li><a href="#framework">Framework questions</a></li>
+<li><a href="#classloading">ClassLoading</a></li>
+<li><a href="#transactions">Transactions</a></li>
+<li><a href="#calloptions">Call Options</a></li>
+</ul>
+<a name="webinar"></a><h2>Webinar questions</h2>
+  <ul><li><b>From a high-level viewpoint, what do you see as common use cases for Neon?</b><br/>
+    Neon has a broad area of applicability, and could be used in many areas. From a technical viewpoint, Neon lends itself to aggregation of resources. Because it has many features of other application frameworks, Neon allows you to spread these resources and the processes easily across your network, without having to worry about clustering, etc. Neon has been designed to have as broad an audience as possible, hence, features like the Web functions(Embedded Tomcat, RenderEngines, etc) and upcoming additions like POJO-based development, annotations and Dependency Injection.<br> 
+    One of the most useful points about Neon, is it's SSI ability; an agent could be deployed on one system, and transparently use an agent on another machine without needing to anything special in order to achieve it. This means that you don't necessarily need to have everything running on one box.<br/> 
+    For instance, an agent can be running in a Neon instance running Tomcat on a Linux server, but in order to serve certain files to users on demand, may need to integrate with, say Excel, or MSMQ, running on a Windows machine - the agent on the other system could easily do this, but for certain infrastructure reasons, these two agents cannot exist on the same machine, but from the developer's point of view, that's pretty much irrelevant. <br/>
+  </li>
+	
+	<li><b>I'm a little unclear: what solution areas are key targets for Neon?</b><br/>
+	  When the base concepts for Neon were being formed, there was a business need to move costly computations (financial reprojections) away from a mainframe, and try to run them on the local network. Primarily, this kind of area is where Neon is targeted - parallel aggregation of resources, computation and storage - essentially grid functions. Also because of the way Neon is designed, and features targeted for future releases, any asynchronous messaging solution could also be deployed on top of Neon.</li>
+	<li><b>How do you define "agent" in your model? What's it comprised of?</b><br/>An agent in Neon, is essentially three things<ol>
+	<li>An identifiable resource on the network.</li>
+	<li>An object that can allow other agents to collaborate with it.</li>
+	<li>Has a defined lifecycle within the framework.</li>
+	<li>Must be able to interact with it's environment.</li>
+	</ol>
+	What this means, is that an agent has to have some form of identity (both unique and group), it can allow other agents to call certain methods that it defines, and must be able to change state, either by being told what it's new state should be by the environment, or by explicitly setting that state itself. At an API level, this is represented by the Agent interface, and for the most part implemented by AbstractAgent.<br/>
+	</li>
+	<li><b>How does Neon manage lifecycle?</b><br/>Neon has quite a <a href="codex.html#lifecycle">rich lifecycle</a> for agents - there are 9 states in all, split into Active and Passive states. Active states are when an agent is working, or is available for work. i.e. BUSY, AVAILABLE, LOCKED, etc. <br/>Passive states are used to infer that the agent is undergoing a major change that is not part of it's normal activity. Passive States are needed to signal to the environment and the agent itself that something is happening, or has happened, to the agent, like being in the process of transfer from one node to another or that a node has been stopped, and the agents in that node have been dumped into a space ready for redeployment, etc. <br/></li>
+	<li><b>Do you see this playing nice with Rio, etc -- or is it an alternative?</b><br/>
+	Okay this really depends upon your viewpoint; if you view Rio as a QOS-based hosting service for code, then yes there are similarities between Neon and Rio, although Neon's QOS options are far less comprehensive than those in Rio. However, Rio is mainly for hosting services, what I call Macro-containment (macro meaning large) whereas Neon concentrates more on the management of code components that interact with Jini services i.e. micro-containment. In general, the resource requirements etc, for Neon are far smaller than those for Rio, yet movement between containers can be a natural part of agent operation in Neon.<br/>
+	</li>
+	<li><b>Where does Neon fit in to the Jini landscape</b><br/>
+	  As said above, Neon is predominately concerned with code that interacts with services, rather than the services themselves. For instance, Jini clients often have to handle Discovery, LookupCaches, etc. and this is before actually interacting with a service. If you have many clients on your network, you may, at worst case, need a separate JVM for each and every client. The idea with Neon is to either centralise these interaction classes into a single JVM, or run them across a grid so they can be managed more easily, whilst at the same time, moving responsibility for lookup caches,distributed transaction operations, etc. into the framework. <br/>
+	</li>
+	<li><b>Is this built on Jini 2?(what about security)</b><br/>
+	Neon is built on Jini 2. As far as security is concerned, it is an area of Neon, that is progressing, albeit rather slowly. 
+	Currently, work is going on regarding security grants for hyperjar files. Looking further decisions will have to be made regarding
+	where JAAS and declarative security can be implemented into the model. Until these key questions have been answered, it is difficult to give a full and balanced answer over security in Neon.<br/></li>
+	<li><b>Transactions? Is it Jini Transactions or something else?</b><br/>Yes, the transaction system inside Neon is primarily based upon Jini transactions. although to reduce overhead, Neon matches a set of locked agents to a single transaction participant, so there is some local transaction management also.<br/></li>
+	<li><b>How are you hoping the Jini community will get involved in the Neon project?</b><br/>In any way they can. Specifically, the set of standard agents, can always be increased. Also because of the way that Neon is currently written, infrastructure level code for Neon, can just as easily be developed as agents than by adding them in to the Neon core. But at the moment, the biggest thing that members of the Jini Community can do, is just take a look at it, and drop me some feedback.<br/></li>
+	<li><b>How many agents are typically comprised in one of your apps?</b><br/>The standard Neon distribution comes with a number of agents that can be collaborated with, such as agents that can lookup Jini services, render data out as web-pages, etc. So you can begin to break down an application into a sequence of agents. Of course, if needed you can write you entire application 'hanging off' from one agent, effectively using the agent's start and init methods as entry points into your application. It really depends upon how <em>you</em> want to deploy your apps, but typically, our instances have a minimum of 15-20 agents running before any applications are deployed, simply because a number of these agents provide infrastructure services that you can utilise when needed.<br/></li>
+	<li><b>What are you using as the wire representation of the message; that is, are you moving Java objects?</b><br/>Yes, invocation messages are serialized objects sent across the wire, however this can cause issues - for instance all return types and method parameters, should be serializable, just in case the agent you are calling is running in another instance</li>
+	</ul>
+	
+<a name="framework"></a>	
+<h2>General Framework questions</h2>
+<ul>
+<li><strong>Does Neon do DI(Dependency Injection)?</strong><br>
+Dependency Injection is not officially part of Neon at the moment, although through interception Neon allows for the agent to be 'surrounded' by other objects, these typically intercept calls sent to the agent. When an agent is deployed into Neon, it is wrapped inside another proxy object, that can intercept calls meant to be delegated to these satellite objects and routes them accordingly.<br/></li>
+<li><strong>Will Neon support DI?</strong><br>It is unlikely that Neon will support DI to the same extent of other frameworks such as Spring. Dependency Injection is a good goal for a framework to move towards, because it reduces complexity and allows you to wire up your objects at deployment time, making things like replacing mock and test objects with production ones, etc. far more predictable. For a grid framework, however, it is highly unlikely that the resources(objects) that you need injecting will stay in one place, or maintain their current service level, throughout the lifecycle of objects that depend upon them. Even where objects can be set for you, there is no guarantee that these objects will be live when you go to use them.<br>This being said, Neon will set some objects for agents, such as loggers, and jini Configuration references.<br/>
+  <em><strong>Caveat:</strong> this is not to say that grid frameworks cannot make use of dependency injection, as I'm sure that frameworks such as Spring and Hivemind etc., are capable of doing so (Indeed initiatives such as GridPort are moving in this direction), but in every design decision made in any framework, certain compromises need to be made. </em><br>
+	<strong><em><font color="green">Update 26/08/05: </font></em></strong>Prototype work has begun on Neon's Dependency Injection engine (and is scheduled for Neon 0.2), although POJO deployment (rather than forcing every deployed object to implement <code>Agent</code>) via Annotations may run into 0.3, as there are a number of issues that need to be addressed due to the nature of grid applications<br/></li>
+<li><strong>Can you give an example of Neon's interception?</strong><br>
+Transaction management uses this 'satellite interception' in order to ensure that agents maintain their transactions contexts and propagate the transactions to any other agents that they call, without needing to have intervention from the developer <br/></li>
+<li><strong>Can I write my own delegated objects?</strong><br/> Yes, simply add in the definitions to Neon's <code>startup.xml</code> file.<br/></li>
+<li><strong>Can I decide which specific agents use my delegates?</strong><br/> No, every agent deployed to a domain will use the same set of delegates to handle satellite interception.<br/></li>
+<li><strong>What type of Grid does Neon create/use?</strong><br/> 
+Neon focuses on providing an application grid, however even in this area there are a number of approaches. Many grids today work on the principle of using a grid for dispatching 'job entities' for a grid node to work on, or placing the entity in a central repository (or one of many such repositories) from which the work is 'picked up' and worked upon - the Compute Farm. Neon's design leans more to a collaborative approach where an entity actively calls out to another entity to do something for it. Agents expose parts of the functionality to the system that then allows other agents to find them and interact with them. Essentially, Neon makes your network, and thus your grid, become your container, allowing you, for instance, to create applications that depend upon multiple different operating systems, or resources, simultaneously. <br/></li>
+<li><strong>How does it grid the application?</strong><br/>
+Neon uses an underlying messaging system called Zenith, that connects one agent to another via a request-reply system (as well as asynchronously). This removes the need to have an active call stack between
+invoker and invoked, allowing the messaging system to route the 'invocation' in whichever way is required. This allows many things including throttling, monitoring, and pluggable dispatch layers. For a broader
+idea of how Zenith works, see Gregor Hohpe's <a href="http://www.eaipatterns.com"><i>Enterprise Integration Patterns</i></a>, upon whose ideas core parts of Zenith were modeled</li>
+</ul>
+<a name="classloading"></a>
+<h2>ClassLoading</h2>
+<ul>
+<li><strong>Why does Neon not use multiple ClassLoaders between partitions?</strong><br>
+For collaboration purposes, Neon currently does not separate partitions using multiple ClassLoaders, however, it is likely that specialised ClassLoaders may need to be written for better segregation of domains. When custom classloaders are investigated, the need to maintain collaboration capabilities between domains will be a very high priority, and as such this need may override the need to support segregated class loaders.<br/>
+</li>
+<li><strong>So it would make partitioning easier?</strong><br>
+Yes, and No. It would make securing your partitions easier and prevent, to some degree, malicious code getting from one partition to another, but on the other hand, it would make agent resolution and cross-partition calls more difficult to predict. Partitioning is mainly for management and segregation purposes rather than for security isolation. Providing secure segregation of code via classloaders can also interfere with any other systems that depend on strict class-loader hierarchies, or differ from the general 'parent-first' rule of classloading, like Tomcat<br/></li>
+<li><strong>Aren't there some issues with only having one 'application-level' classloader, like static fields?</strong><br>
+Static fields, and static initialisers can cause some issues, and should be used very carefully. Of particular note is transfer of agent data from one system to another - static data is not serializable as it is technically part of the class, rather than the instance to be transferred, thus using static fields in anything other than LocalAgents is not recommended.<br/></li>
+<li><strong>Where does Jini classloading fit in?</strong><br/>
+Neon supplies an extended version of PreferredClassLoader, that allows for use of a special jar format that uses Pack200 format, for more information see <a href="deploy.html">"Deployment"</a><br/>
+ </li>
+</ul>
+<a name="transactions"></a>
+<h2>Transactions</h2>
+<ul>
+<li><strong>Can an agent run multiple transactions?</strong><br>
+No, an agent may only be in one Neon-managed transaction at any point in time.<br/></li>
+<li><strong>Isn't that a bit limiting?</strong><br>
+Depends upon your point of view, a single agent running multiple Neon-managed transactions, although possible to write, would be extremely complicated to debug and trace in the system <br/></li>
+<li><strong>What do you mean by <em>'Neon-Managed'</em></strong>?<br>
+Well Neon manages a lot of transaction stuff for you, such as signaling other Neon instances to join the transaction if the agent you are calling is on another host, invoking 2PC methods on your TransactionalAgents automatically, and keeping track of them <br/></li>
+<li><strong>Can I still use a standard TransactionManager</strong>?<br>
+Yes, you can still obtain an instance to a Jini Transaction Manager, using the ServiceAgent, and from there create and manage your own transactions.<br/></li>
+<li><strong>Does Neon support XA?</strong><br>
+Not currently. Neon only support Jini Distributed Transactions, and if the CI Transaction Manager (mahalo) is upgraded to support XA, then Neon will support it by default. That being said, there are currently no plans to support a second distributed transaction protocol<br/></li>
+
+<li><strong>Is there an issue with concurrency?</strong><br>
+Neon managed transactions create a significant number of secondary messages, that handle the propagation of the transaction context from agent to agent and allow those agents to enlist in the transaction (i.e. be associated with the distributed transaction), this happens regardless of whether the agent is actively part of a transaction (responds to abort,commit or prepare calls) or not, in order to ensure that transactions propagate down the full call tree. This process creates a large number of messages and methods calls, in turn, due to threading, contention on threads can cause general performance to degrade <br/></li>
+<li><strong>Are there any processes in Neon to mitigate this happening?</strong><br>
+When you call to create a transaction, Neon waits between 0 and 1sec before fulfilling the request in order to stop a large number of agents swamping the transaction process, it does a similar thing before clearing down the transaction contexts at the end of the transaction. Also Neon will always call init() immediately on creating an agent, but will make a similar random wait before calling start(). These waiting times can be specified in the configuration file, and are designed to reduce contention on startup of agents.<br/></li>
+<li><strong>Are there any other things that can be done?</strong><br>
+As in any transactional system, be sure that you actually <em>need</em> a transaction. Transactions, and distributed ones in particular, can place a large overhead on any multi-threaded, high-concurrency system. If you do require a transaction, then there are a number of strategies that you can use when handling transactions that can help reduce concurrency <br/></li>
+</ul>
+<a name="calloptions"></a>
+
+<h2>Calling agents</h2>
+<ul>
+<li><strong>Why can't I just call myAgent.getState(), or any of the other methods in the <em>Agent</em> interface, once I've requested it through the AgentContext?</strong><br>
+Because myAgent represents an agent but does not directly refer to it. Neon creates dynamic proxies<br/></li>
+<li><strong>What happens if two differently coded agents have the same name and namespace?</strong><br>
+If both agents have the same class signatures, i.e. the same base classes and implement the same interfaces, then Neon will not intervene. However, in the case where these are different, Neon will prevent the second agent from registering in the group.<br/></li>
+<li><strong>What happens if two agents have the same ID?</strong><br>
+Okay, there are two type of ID in Neon, the first one is the <i>visible</i> ID, this is what <em>may</em> be duplicated, however, this is unlikely to happen in the majority of cases. This is what is returned by AgentIdentity#getID() and is essentially a Uuid instance. There is also other parts to AgentIdentity, such as the originating IP, time of creation, etc that further reduce the chance of duplicate <em>whole</em> IDs<br/></li>
+<li><strong>If Neon sits on top of a messaging system, is there anyway to call agents asynchronously?</strong><br>
+Yes, there are three ways to call agent methods asynchronously, each ranging in complexity.<ol>
+<li><strong>Implement Zenith endpoints and directly use channels and messages</strong><br>
+Although this is very low level, and a significant departure from normal agent interaction, this is really only what Neon is doing underneath; by default, Neon sends the message and when the reply is received notifies the calling thread, effectively creating request-reply semantics, and thus blocking calls. By sending messages directly, you can customise this, however, you will have to maintain your own context.</li>
+<li><strong>Call getAgentContext#getAsynchronousAgent(string, AsyncHandler)</strong><br>
+  This creates a proxy to your agent that instead of returning, when the agent finishes the call, <em>(as is the default)</em> it returns immediately and instead calls the AsyncHandler that you supplied when you get the agent. </li>
+<li><strong>Generate a separate asynchronous interface for your agent.</strong><br>
+One of the utilities that ships with Neon can generate an Asynchronous version of your collaborative interfaces - you don't have to implement these interfaces in your agent, as Neon can automatically handle the transition from your synchronous version to the generated asynchronous version.</li>
+</ol><br/></li>
+<li><strong> Is there a preferred way to do asynchronous calls</strong>? <br>
+  For a fuller discussion of the options for making asynchronous calls, and their associated trade-offs, see <a href="async.html">here</a><br/><strong></strong></li>
+</ul>
+<hr>
+<div align="left"><a href="neonintro.html">Tutorial Main Page</a></div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</body>
+</html>

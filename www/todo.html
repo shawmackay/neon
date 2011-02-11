@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Neon :: Todo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="neon.css"/>
+</head>
+
+<body>
+<div id="container">
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+websiteRoot = "https://neon.dev.java.net";
+if(window.location.href.indexOf(websiteRoot)!=-1){
+_uacct = "UA-443086-1";
+urchinTracker();
+}
+</script>
+<div class="smallimgblocktitle">
+<img src="images/neonemboss_small_red.jpg">
+</div>
+<div class="undertitle"> 
+  <center>
+     ToDo
+  </center> 
+</div> 
+ <div class="paneldisplayLarge"> 
+    <div class="innerLGPanel"> 
+  <p>Below is a list of things currently on the to-do list for Neon
+  </p>
+  <ul>
+    <li>Broadcast proxies</li>
+    <li>Meta-matching in constraints</li>
+    <li>Multiple presentation types in Render Agents<br>
+		<div style="padding-left:16px;">In progress: May need to change interfaces for <code>PresentableAgent</code></div>
+		</li>
+    <li>Persistent Transaction State - <strong>Priority</strong> </li>
+    <li>Slices - <strong>Priority</strong></li>
+    <li>Better Integration from Tomcat into Neon</li>
+		<div style="padding-left:32px">Possibly looking into adding integration without embedding Neon - i.e. calling to an external instance of Neon</div>
+    <li>Deregistration of Sensors</li>
+		<div style="padding-left:16px;">Will need to tie this into broadcasting</div>
+    <li>POJO/Agent Composition</li>
+				<div style="padding-left:16px;">Basic prototype for Dependency Injection is built <code>org.jini.projects.neon.di</code>,
+				however need to work out how to create and persist an agent 'section' and relate it to the POJO it represents</div>
+    <li>Activation</li>
+  </ul>
+</div>
+</div>
+</div>
+</body>
+</html>
